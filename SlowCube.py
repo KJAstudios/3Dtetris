@@ -8,6 +8,7 @@ _lightVector = np.asfarray([0, 0, 1])
 
 class SlowCube:
     def __init__(self):
+        # vertices of the 3D model
         self.verts = np.asfarray([(1, -1, -1),
                                   (1, 1, -1),
                                   (-1, 1, -1),
@@ -17,6 +18,7 @@ class SlowCube:
                                   (-1, -1, 1),
                                   (-1, 1, 1)])
 
+        # Vertices that make a face of the model
         self.surfaces = np.array([(0, 1, 2, 3),
                                   (3, 2, 7, 6),
                                   (6, 7, 5, 4),
@@ -24,8 +26,11 @@ class SlowCube:
                                   (1, 5, 7, 2),
                                   (4, 0, 3, 6)])
 
+        # color of the shape
+        # TODO change this to texture wrapping
         self.color = np.asfarray([0, 0, 1])
 
+        # the vertex normals, don't know why this is smaller than the number of vertices
         self.normals = np.asfarray([(0, 0, -1),
                                     (-1, 0, 0),
                                     (0, 0, 1),
