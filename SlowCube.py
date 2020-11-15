@@ -2,7 +2,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 import numpy as np
 import math
-from obj_loader import LoadOBJ
+from obj_loader_2 import LoadOBJ
 
 _lightVector = np.asfarray([0, 0, 1])
 
@@ -11,9 +11,9 @@ class SlowCube:
     def __init__(self):
         model = LoadOBJ("resources/models/S_tetris_piece.obj")
 
-        self.verts = model["verts"]
-        self.surfaces = model["surfs"]
-        self.normals = model["normals"]
+        self.verts = np.asfarray(model["verts"])
+        self.surfaces = np.asarray(model["surfs"])
+        self.normals = np.asfarray(model["normals"])
 
         # color of the shape
         # TODO change this to texture wrapping
@@ -32,7 +32,7 @@ class SlowCube:
         glBegin(GL_QUADS)
         for n, surface in enumerate(self.surfaces):
             for vert in surface:
-                norm = np.append(self.normals[n], 1)
+                norm = np.append(self.normals[vert[1]], 1)
                 modelNorm = np.matmul(norm, invT)
                 modelNorm = np.delete(modelNorm, 3)
                 np.linalg.norm(modelNorm)
@@ -41,7 +41,7 @@ class SlowCube:
                 mult = max(min(dotP, 1), 0)
                 glColor3fv(self.color * mult)
 
-                glVertex3fv(self.verts[vert])
+                glVertex3fv(self.verts[vert[0]])
         glEnd()
 
     def Render(self):
