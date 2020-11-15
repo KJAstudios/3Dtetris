@@ -59,3 +59,5 @@ def LoadOBJ(path):
     f.close()
 
     return {'verts': verts, 'surfs': surfaces, 'normals': normals, 'textureVerts': textureVerts}
+
+print(LoadOBJ("resources/models/box_tetris_piece.obj"))

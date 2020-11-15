@@ -9,42 +9,15 @@ _lightVector = np.asfarray([0, 0, 1])
 
 class SlowCube:
     def __init__(self):
-        model = LoadOBJ("resources/models/box_tetris_piece.obj")
-        # vertices of the 3D model
-        # self.verts = np.asfarray([(1, -1, -1),
-        #                          (1, 1, -1),
-        #                          (-1, 1, -1),
-        #                          (-1, -1, -1),
-        #                         (1, -1, 1),
-        #                          (1, 1, 1),
-        #                          (-1, -1, 1),
-        #                          (-1, 1, 1)])
+        model = LoadOBJ("resources/models/S_tetris_piece.obj")
 
         self.verts = model["verts"]
-
-        # Vertices that make a face of the model
-        # self.surfaces = np.array([(0, 1, 2, 3),
-        #                          (3, 2, 7, 6),
-        #                          (6, 7, 5, 4),
-        #                          (4, 5, 1, 0),
-        #                          (1, 5, 7, 2),
-        #                          (4, 0, 3, 6)])
-
         self.surfaces = model["surfs"]
+        self.normals = model["normals"]
 
         # color of the shape
         # TODO change this to texture wrapping
         self.color = np.asfarray([0, 0, 1])
-
-        # the vertex normals, don't know why this is smaller than the number of vertices
-        # self.normals = np.asfarray([(0, 0, -1),
-        #                            (-1, 0, 0),
-        #                            (0, 0, 1),
-        #                            (1, 0, 0),
-        #                            (0, 1, 0),
-        #                            (0, -1, 0)])
-
-        self.normals = model["normals"]
 
         self.ang = 0
         self.axis = (3, 1, 1)
@@ -68,7 +41,7 @@ class SlowCube:
                 mult = max(min(dotP, 1), 0)
                 glColor3fv(self.color * mult)
 
-                glVertex3fv(self.verts[vert-1])
+                glVertex3fv(self.verts[vert])
         glEnd()
 
     def Render(self):
