@@ -5,9 +5,7 @@ from OpenGL.GLU import *
 from SlowCube import SlowCube
 
 # Main Init
-print('Init pygame')
 pygame.init()
-print('nothing')
 size = width, height = 640, 480
 screen = pygame.display.set_mode(size, DOUBLEBUF | OPENGL)
 
