@@ -8,8 +8,8 @@ _lightVector = np.asfarray([0, 0, 1])
 
 
 class SlowCube:
-    def __init__(self):
-        model = LoadOBJ("resources/models/S_tetris_piece.obj")
+    def __init__(self,type):
+        model = LoadOBJ(f"resources/models/{type}_tetris_piece.obj")
 
         self.verts = np.asfarray(model["verts"])
         self.surfaces = np.asarray(model["surfs"])

@@ -5,7 +5,9 @@ from OpenGL.GLU import *
 from SlowCube import SlowCube
 
 # Main Init
+print('Init pygame')
 pygame.init()
+print('nothing')
 size = width, height = 640, 480
 screen = pygame.display.set_mode(size, DOUBLEBUF | OPENGL)
 
@@ -18,7 +20,9 @@ glDepthFunc(GL_LESS)
 
 glTranslate(0.0, 0.0, -5)
 
-cube = SlowCube()
+blockList = []
+
+blockList.append(SlowCube("box"))
 
 
 def Update(deltaTime):
@@ -26,14 +30,17 @@ def Update(deltaTime):
         if event.type == pygame.QUIT:
             return False
 
-    cube.Update(deltaTime)
+    for block in blockList:
+        block.Update(deltaTime)
+
     return True
 
 
 def Render():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-    cube.Render()
+    for block in blockList:
+        block.Render(deltaTime)
 
     pygame.display.flip()
 
