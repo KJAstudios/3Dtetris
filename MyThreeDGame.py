@@ -38,7 +38,7 @@ def Render():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
     for block in blockList:
-        block.Render(deltaTime)
+        block.Render()
 
     pygame.display.flip()
 
