@@ -11,8 +11,10 @@ class SlowCube:
     def __init__(self,type=None,rotateSpeed=50.0):
         global shapeList
 
+        # Get type of shape
         self.type = type
 
+        # Check if shape type is valid
         if self.type in shapeList:
             model = LoadOBJ(f"resources/models/{self.type}_tetris_piece.obj")
         else:
@@ -28,11 +30,15 @@ class SlowCube:
         # TODO change this to texture wrapping
         self.color = np.asfarray([0, 0, 1])
 
+        # Starting Angle
         self.ang = 0
+        # Get speed of rotation
         self.rotateSpeed = rotateSpeed
+        # Axis of rotation
         self.axis = (3, 1, 1)
 
     def Update(self, deltaTime):
+        # Update Angle
         self.ang += self.rotateSpeed * deltaTime
 
     def DrawBlock(self):
