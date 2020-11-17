@@ -89,7 +89,15 @@ class SlowCube:
 
     def DrawBlock(self):
         global _lightVector
+        
+        
+        
+        #glEnable(GL_TEXTURE_3D)
         texture = self.LoadTexture()
+        #glBindTexture(GL_TEXTURE_2D, texture)
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
+
+
         invT = np.linalg.inv(glGetDouble(GL_MODELVIEW_MATRIX)).transpose()
         glBegin(GL_QUADS)
         for n, surface in enumerate(self.surfaces):
@@ -105,9 +113,6 @@ class SlowCube:
                 dotP = np.dot(_lightVector, modelNorm)
                 mult = max(min(dotP, 1), 0)
                 glColor3fv(self.color * mult)
-                #else:
-                #    glEnable(GL_TEXTURE_3D)
-                #    glBindTexture(GL_TEXTURE_2D, texture)
 
                 glVertex3fv(self.verts[vert[0]])
         glEnd()

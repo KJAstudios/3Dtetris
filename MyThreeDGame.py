@@ -31,7 +31,7 @@ import UI.UI as UI
 
 UI.Init()
 
-currentShapeID = 0
+currentShapeID = -1
 
 
 def Update(deltaTime):
