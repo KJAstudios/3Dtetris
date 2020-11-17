@@ -8,8 +8,9 @@ from gamecommon import shapeList
 
 _lightVector = np.asfarray([0, 0, 1])
 
+
 class SlowCube:
-    def __init__(self,id,type=None,rotateSpeed=100.0,pos=(0,0,0)):
+    def __init__(self, id, type=None, rotateSpeed=100.0, pos=(0, 0, 0)):
         global shapeList
 
         # Get type of shape
@@ -33,7 +34,7 @@ class SlowCube:
 
         # If necessary, translate based on pos
         self.pos = pos
-        if self.pos != (0,0,0):
+        if self.pos != (0, 0, 0):
             for i in self.verts:
                 i[0] += self.pos[0]
                 i[1] += self.pos[1]
@@ -48,9 +49,9 @@ class SlowCube:
         # Get speed of rotation
         self.rotateSpeed = rotateSpeed
         # Axis of rotation (0,0,0) + self.pos
-        self.axis = (self.pos[0],self.pos[1],self.pos[2])
+        self.axis = (self.pos[0], self.pos[1], self.pos[2])
 
-    def Update(self, deltaTime,currentID):
+    def Update(self, deltaTime, currentID):
         if self.id == currentID:
             # Update Angle if current Shape
             self.ang += self.rotateSpeed * deltaTime
@@ -63,13 +64,13 @@ class SlowCube:
         textureText = pygame.image.tostring(textureSuyrf, "RGBA", 1)
 
         # Texture width and height
-        width  = textureSurf.get_width()
+        width = textureSurf.get_width()
         height = textureSurf.get_height()
 
         # Do all the crazy gl stuff
         glEnable(GL_TEXTURE_2D)
         textureID = glGenTextures(1)
-        glBindTexture(GL_TEXTURE_2D,textureID)
+        glBindTexture(GL_TEXTURE_2D, textureID)
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)

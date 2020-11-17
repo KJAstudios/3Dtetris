@@ -40,9 +40,6 @@ def LoadOBJ(path):
             for vertex in surface:
                 pair = []
                 vertex = vertex.split('/')
-                vertex_num = int(vertex[0]) - 1
-                textureVert_num = int(vertex[1]) - 1
-                normal_num = int(vertex[2]) - 1
                 point = (int(vertex[0]) - 1, int(vertex[2]) - 1)
                 pair.append(point)
                 surfaces.append(pair)
