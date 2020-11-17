@@ -26,6 +26,10 @@ blockList.append(SlowCube(len(blockList),type="S",rotateSpeed=175.0,pos=(5,3,0))
 blockList.append(SlowCube(len(blockList),type="straight",rotateSpeed=125.0,pos=(-5,-3,0)))
 blockList.append(SlowCube(len(blockList),type="L",rotateSpeed=-125.0,pos=(0,-3,0)))
 
+#import UI
+import UI.UI as UI
+UI.Init()
+
 
 currentShapeID = 0
 
@@ -48,27 +52,31 @@ def Update(deltaTime):
                 currentShapeID = 4
             elif event.key == pygame.K_6:
                 currentShapeID = 5
+        if UI.ProcessEvent(event) == True:
+            continue
                 
     for id, block in enumerate(blockList):
         # id can be used to determine if a block should be able to be rotated
         block.Update(deltaTime,currentShapeID)
 
+    UI.Update(deltaTime)
+
     return True
 
 
-def Render():
+def Render(screen):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
     for block in blockList:
         block.Render()
-
+    UI.Render(screen)
     pygame.display.flip()
 
 
 _gTickLastFrame = pygame.time.get_ticks()
 _gDeltaTime = 0.0
 while Update(_gDeltaTime):
-    Render()
+    Render(screen)
     t = pygame.time.get_ticks()
     _gDeltaTime = (t - _gTickLastFrame) / 1000.0
     _gTickLastFrame = t
