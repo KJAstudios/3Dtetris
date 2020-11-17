@@ -20,17 +20,26 @@ glTranslate(0.0, 0.0, -5)
 
 blockList = []
 
-blockList.append(SlowCube("box"))
-blockList.append(SlowCube("S",75.0))
+blockList.append(SlowCube(len(blockList),"box"))
+blockList.append(SlowCube(len(blockList),"S",75.0))
 
+currentShapeID = 0
 
 def Update(deltaTime):
+    global currentShapeID
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_1:
+                currentShapeID = 0
+            elif event.key == pygame.K_2:
+                currentShapeID = 1
 
-    for block in blockList:
-        block.Update(deltaTime)
+    for id, block in enumerate(blockList):
+        # id can be used to determine if a block should be able to be rotated
+        block.Update(deltaTime,currentShapeID)
 
     return True
 

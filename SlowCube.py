@@ -8,11 +8,14 @@ from gamecommon import shapeList
 _lightVector = np.asfarray([0, 0, 1])
 
 class SlowCube:
-    def __init__(self,type=None,rotateSpeed=50.0):
+    def __init__(self,id,type=None,rotateSpeed=50.0):
         global shapeList
 
         # Get type of shape
         self.type = type
+
+        # Set id
+        self.id = id
 
         # Check if shape type is valid
         if self.type in shapeList:
@@ -37,9 +40,10 @@ class SlowCube:
         # Axis of rotation
         self.axis = (3, 1, 1)
 
-    def Update(self, deltaTime):
-        # Update Angle
-        self.ang += self.rotateSpeed * deltaTime
+    def Update(self, deltaTime,currentID):
+        if self.id == currentID:
+            # Update Angle if current Shape
+            self.ang += self.rotateSpeed * deltaTime
 
     def DrawBlock(self):
         global _lightVector
