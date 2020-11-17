@@ -16,12 +16,13 @@ glMatrixMode(GL_MODELVIEW)
 glEnable(GL_DEPTH_TEST)
 glDepthFunc(GL_LESS)
 
-glTranslate(0.0, 0.0, -5)
+glTranslate(0.0, 0.0, -10)
 
 blockList = []
 
-blockList.append(SlowCube(len(blockList),"box"))
-blockList.append(SlowCube(len(blockList),"S",75.0))
+blockList.append(SlowCube(len(blockList),type="box",pos=(-3,0,0)))
+blockList.append(SlowCube(len(blockList),type="T",rotateSpeed=-150.0))
+blockList.append(SlowCube(len(blockList),type="S",rotateSpeed=175.0,pos=(3,0,0)))
 
 currentShapeID = 0
 
@@ -36,7 +37,14 @@ def Update(deltaTime):
                 currentShapeID = 0
             elif event.key == pygame.K_2:
                 currentShapeID = 1
+            elif event.key == pygame.K_3:
+                currentShapeID = 2
+            elif event.key == pygame.K_4:
+                currentShapeID = 3
+            elif event.key == pygame.K_5:
+                currentShapeID = 4
 
+                
     for id, block in enumerate(blockList):
         # id can be used to determine if a block should be able to be rotated
         block.Update(deltaTime,currentShapeID)

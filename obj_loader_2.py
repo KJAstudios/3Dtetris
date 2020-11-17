@@ -51,5 +51,3 @@ def LoadOBJ(path):
     f.close()
 
     return {'verts': verts, 'surfs': surfaces, 'normals': normals}
-
-print(LoadOBJ("resources/models/S_tetris_piece.obj"))
