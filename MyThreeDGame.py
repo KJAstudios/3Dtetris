@@ -52,6 +52,8 @@ def Update(deltaTime):
                 currentShapeID = 4
             elif event.key == pygame.K_6:
                 currentShapeID = 5
+            elif event.key == pygame.K_7:
+                currentShapeID = -1
         if UI.ProcessEvent(event) == True:
             continue
                 
