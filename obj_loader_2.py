@@ -52,4 +52,4 @@ def LoadOBJ(path):
 
     return {'verts': verts, 'surfs': surfaces, 'normals': normals}
 
-print(LoadOBJ("resources/models/S_tetris_piece.obj"))
+#print(LoadOBJ("resources/models/S_tetris_piece.obj"))
