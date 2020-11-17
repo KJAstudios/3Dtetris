@@ -3,13 +3,22 @@ from OpenGL.GLU import *
 import numpy as np
 import math
 from obj_loader_2 import LoadOBJ
+from gamecommon import shapeList
 
 _lightVector = np.asfarray([0, 0, 1])
 
-
 class SlowCube:
-    def __init__(self,type):
-        model = LoadOBJ(f"resources/models/{type}_tetris_piece.obj")
+    def __init__(self,type=None,rotateSpeed=50.0):
+        global shapeList
+
+        self.type = type
+
+        if self.type in shapeList:
+            model = LoadOBJ(f"resources/models/{self.type}_tetris_piece.obj")
+        else:
+            print('Major Error! Shape type not recognized!')
+            # Would be good to enter code to delete 'self' if this occurs
+            return False
 
         self.verts = np.asfarray(model["verts"])
         self.surfaces = np.asarray(model["surfs"])
@@ -20,10 +29,11 @@ class SlowCube:
         self.color = np.asfarray([0, 0, 1])
 
         self.ang = 0
+        self.rotateSpeed = rotateSpeed
         self.axis = (3, 1, 1)
 
     def Update(self, deltaTime):
-        self.ang += 50.0 * deltaTime
+        self.ang += self.rotateSpeed * deltaTime
 
     def DrawBlock(self):
         global _lightVector

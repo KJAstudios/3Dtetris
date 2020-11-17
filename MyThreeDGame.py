@@ -21,6 +21,7 @@ glTranslate(0.0, 0.0, -5)
 blockList = []
 
 blockList.append(SlowCube("box"))
+blockList.append(SlowCube("S",75.0))
 
 
 def Update(deltaTime):
