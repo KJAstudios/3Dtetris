@@ -47,8 +47,8 @@ class SlowCube:
         self.ang = 0
         # Get speed of rotation
         self.rotateSpeed = rotateSpeed
-        # Axis of rotation
-        self.axis = (3, 1, 1)
+        # Axis of rotation (0,0,0) + self.pos
+        self.axis = (self.pos[0],self.pos[1],self.pos[2])
 
     def Update(self, deltaTime,currentID):
         if self.id == currentID:
