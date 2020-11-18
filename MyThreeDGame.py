@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
-from SlowCube import SlowCube
+from Cube import Cube
 
 # Main Init
 pygame.init()
@@ -20,11 +20,11 @@ glTranslate(0.0, 0.0, -15)
 
 blockList = []
 
-blockList.append(SlowCube(len(blockList), type="box", pos=(-5, 3, 0)))
-blockList.append(SlowCube(len(blockList), type="T", rotateSpeed=-150.0, pos=(0, 3, 0)))
-blockList.append(SlowCube(len(blockList), type="S", rotateSpeed=175.0, pos=(5, 3, 0)))
-blockList.append(SlowCube(len(blockList), type="straight", rotateSpeed=125.0, pos=(-5, -3, 0)))
-blockList.append(SlowCube(len(blockList), type="L", rotateSpeed=-125.0, pos=(0, -3, 0)))
+blockList.append(Cube(len(blockList), type="box", pos=(-5, 3, 0)))
+blockList.append(Cube(len(blockList), type="T", rotateSpeed=-150.0, pos=(0, 3, 0)))
+blockList.append(Cube(len(blockList), type="S", rotateSpeed=175.0, pos=(5, 3, 0)))
+blockList.append(Cube(len(blockList), type="straight", rotateSpeed=125.0, pos=(-5, -3, 0)))
+blockList.append(Cube(len(blockList), type="L", rotateSpeed=-125.0, pos=(0, -3, 0)))
 
 # import UI
 import UI.UI as UI

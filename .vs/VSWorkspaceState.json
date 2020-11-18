@@ -2,8 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\resources",
-    "\\resources\\models"
+    "\\resources\\models",
+    "\\resources\\textures"
   ],
-  "SelectedNode": "\\gamecommon.py",
+  "SelectedNode": "\\Cube.py",
   "PreviewInSolutionExplorer": false
 }
