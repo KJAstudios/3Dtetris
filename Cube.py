@@ -3,13 +3,14 @@ from OpenGL.GLU import *
 import pygame
 import numpy as np
 import math
-from obj_loader_2 import LoadOBJ
+from obj_to_vbo import LoadOBJ
 from gamecommon import shapeList
 
-_lightVector = np.asfarray([0, 0, 1]) #<- Unused _lightvector
+_lightVector = np.asfarray([0, 0, 1])  # <- Unused _lightvector
 
 from OpenGL.arrays import vbo
 from OpenGL.GL import shaders
+
 
 class Cube:
     def __init__(self, id, type=None, rotateSpeed=100.0, pos=(0, 0, 0)):
@@ -18,7 +19,7 @@ class Cube:
         # color of the shape
         # TODO change this to texture wrapping
         self.color = np.asfarray([0, 0, 1])
-        color = np.asfarray([0,0,1])
+        color = np.asfarray([0, 0, 1])
 
         # Get type of shape
         self.type = type
@@ -28,20 +29,20 @@ class Cube:
 
         # Check if shape type is valid
         if self.type in shapeList:
-            model = LoadOBJ(f"resources/models/{self.type}_tetris_piece.obj")
+            model = LoadOBJ(f"resources/models/{self.type}_tetris_piece.obj", self.color)
         else:
             print('Major Error! Shape type not recognized!')
             # Would be good to enter code to delete 'self' if this occurs
             return False
-        
+
         ################################################
         ### NEED TO CHANGE IN ORDER FOR GAME TO WORK ###
         ################################################
 
         # Set verts, surfaces, and normals
-        #self.vertsTemp = np.asfarray(model["verts"])
-        #self.surfaces = np.asarray(model["surfs"])
-        #self.normals = np.asfarray(model["normals"])
+        # self.vertsTemp = np.asfarray(model["verts"])
+        # self.surfaces = np.asarray(model["surfs"])
+        # self.normals = np.asfarray(model["normals"])
         ###
 
         #######################
@@ -50,38 +51,39 @@ class Cube:
 
         # For now just use default cube until obj loader is fixed. Use this cube to test texture/ui
         # 3 positions, 3 colors, 3 normals, 2 UVs
+        '''
         self.verts = np.float32([(1, -1, -1, color[0], color[1], color[2], 0, 0, -1, 0, 0),
-                                    (1, 1, -1, color[0], color[1], color[2], 0, 0, -1, 1, 0),
-                                    (-1, 1, -1, color[0], color[1], color[2], 0, 0, -1, 1, 1),
-                                    (-1, -1, -1, color[0], color[1], color[2], 0, 0, -1, 0, 1),
+                                 (1, 1, -1, color[0], color[1], color[2], 0, 0, -1, 1, 0),
+                                 (-1, 1, -1, color[0], color[1], color[2], 0, 0, -1, 1, 1),
+                                 (-1, -1, -1, color[0], color[1], color[2], 0, 0, -1, 0, 1),
 
-                                    (-1, -1, -1, color[0], color[1], color[2], -1, 0, 0, 0, 0),
-                                    (-1, 1, -1, color[0], color[1], color[2], -1, 0, 0, 1, 0),
-                                    (-1, 1, 1, color[0], color[1], color[2], -1, 0, 0, 1, 1),
-                                    (-1, -1, 1, color[0], color[1], color[2], -1, 0, 0, 0, 1),
+                                 (-1, -1, -1, color[0], color[1], color[2], -1, 0, 0, 0, 0),
+                                 (-1, 1, -1, color[0], color[1], color[2], -1, 0, 0, 1, 0),
+                                 (-1, 1, 1, color[0], color[1], color[2], -1, 0, 0, 1, 1),
+                                 (-1, -1, 1, color[0], color[1], color[2], -1, 0, 0, 0, 1),
 
-                                    (-1, -1, 1, color[0], color[1], color[2], 0, 0, 1, 0, 0),
-                                    (-1, 1, 1, color[0], color[1], color[2], 0, 0, 1, 1, 0),
-                                    (1, 1, 1, color[0], color[1], color[2], 0, 0, 1, 1, 1),
-                                    (1, -1, 1, color[0], color[1], color[2], 0, 0, 1, 0, 1),
-                                  
-                                    (1, -1, 1, color[0], color[1], color[2], 1, 0, 0, 0, 0),
-                                    (1, 1, 1, color[0], color[1], color[2], 1, 0, 0, 1, 0),
-                                    (1, 1, -1, color[0], color[1], color[2], 1, 0, 0, 1, 1),
-                                    (1, -1, -1, color[0], color[1], color[2], 1, 0, 0, 0, 1),
-                                  
-                                    (1, 1, -1, color[0], color[1], color[2], 0, 1, 0, 0, 0),
-                                    (1, 1, 1, color[0], color[1], color[2], 0, 1, 0, 1, 0),
-                                    (-1, 1, 1, color[0], color[1], color[2], 0, 1, 0, 1, 1),
-                                    (-1, 1, -1, color[0], color[1], color[2], 0, 1, 0, 0, 1),
-                                  
-                                    (1, -1, 1, color[0], color[1], color[2], 0, -1, 0, 0, 0),
-                                    (1, -1, -1, color[0], color[1], color[2], 0, -1, 0, 1, 0),
-                                    (-1, -1, -1, color[0], color[1], color[2], 0, -1, 0, 1, 1),
-                                    (-1, -1, 1, color[0], color[1], color[2], 0, -1, 0, 0, 1)
-                                    ])
+                                 (-1, -1, 1, color[0], color[1], color[2], 0, 0, 1, 0, 0),
+                                 (-1, 1, 1, color[0], color[1], color[2], 0, 0, 1, 1, 0),
+                                 (1, 1, 1, color[0], color[1], color[2], 0, 0, 1, 1, 1),
+                                 (1, -1, 1, color[0], color[1], color[2], 0, 0, 1, 0, 1),
 
+                                 (1, -1, 1, color[0], color[1], color[2], 1, 0, 0, 0, 0),
+                                 (1, 1, 1, color[0], color[1], color[2], 1, 0, 0, 1, 0),
+                                 (1, 1, -1, color[0], color[1], color[2], 1, 0, 0, 1, 1),
+                                 (1, -1, -1, color[0], color[1], color[2], 1, 0, 0, 0, 1),
 
+                                 (1, 1, -1, color[0], color[1], color[2], 0, 1, 0, 0, 0),
+                                 (1, 1, 1, color[0], color[1], color[2], 0, 1, 0, 1, 0),
+                                 (-1, 1, 1, color[0], color[1], color[2], 0, 1, 0, 1, 1),
+                                 (-1, 1, -1, color[0], color[1], color[2], 0, 1, 0, 0, 1),
+
+                                 (1, -1, 1, color[0], color[1], color[2], 0, -1, 0, 0, 0),
+                                 (1, -1, -1, color[0], color[1], color[2], 0, -1, 0, 1, 0),
+                                 (-1, -1, -1, color[0], color[1], color[2], 0, -1, 0, 1, 1),
+                                 (-1, -1, 1, color[0], color[1], color[2], 0, -1, 0, 0, 1)
+                                 ])'''
+
+        self.verts = np.float32(model)
         # Vertex Shader thing?
         self.VERTEX_SHADER = shaders.compileShader("""#version 130
         uniform mat4 invT;
@@ -96,7 +98,6 @@ class Cube:
             vertex_color = vec4(color * min(1, max(0, norm[2])), 1.0);
         }""", GL_VERTEX_SHADER)
 
-        
         self.FRAGMENT_SHADER = shaders.compileShader("""#version 130 
         in vec4 vertex_color;
         out vec4 fragColor;
@@ -105,9 +106,8 @@ class Cube:
             fragColor = vertex_color;
         }""", GL_FRAGMENT_SHADER)
 
-        
         self.shader = shaders.compileProgram(self.VERTEX_SHADER, self.FRAGMENT_SHADER)
-        self.vbo = vbo.VBO(self.verts) #<- this is where verts is processed
+        self.vbo = vbo.VBO(self.verts)  # <- this is where verts is processed
 
         self.uniformInvT = glGetUniformLocation(self.shader, "invT")
         self.position = glGetAttribLocation(self.shader, "position")
@@ -129,7 +129,7 @@ class Cube:
         # Axis of rotation (0,0,0) + self.pos
         self.axis = (self.pos[0], self.pos[1], self.pos[2])
 
-    def Update(self, deltaTime,currentID):
+    def Update(self, deltaTime, currentID):
         if self.id == currentID or currentID == -1:
             # Update Angle if current Shape
             self.ang += self.rotateSpeed * deltaTime
@@ -152,22 +152,20 @@ class Cube:
         glEnable(GL_TEXTURE_2D)
         textureID = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, textureID)
-        #glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-        #glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-        #glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
-        #glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-        #glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-        #glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-        #glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-        #glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+        # glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        # glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureText)
 
         return textureID
 
     def DrawBlock(self):
-        
-        
-        
+
         shaders.glUseProgram(self.shader)
         invT = np.linalg.inv(glGetDouble(GL_MODELVIEW_MATRIX)).transpose()
         glUniformMatrix4fv(self.uniformInvT, 1, False, invT)
@@ -179,8 +177,8 @@ class Cube:
                 glEnableVertexAttribArray(self.vertex_normal)
                 stride = 44
                 glVertexAttribPointer(self.position, 3, GL_FLOAT, False, stride, self.vbo)
-                glVertexAttribPointer(self.color, 3, GL_FLOAT, False, stride, self.vbo+12)
-                glVertexAttribPointer(self.vertex_normal, 3, GL_FLOAT, True, stride, self.vbo+24)
+                glVertexAttribPointer(self.color, 3, GL_FLOAT, False, stride, self.vbo + 12)
+                glVertexAttribPointer(self.vertex_normal, 3, GL_FLOAT, True, stride, self.vbo + 24)
                 glDrawArrays(GL_QUADS, 0, 24)
 
             finally:
@@ -196,25 +194,22 @@ class Cube:
         #####################################
         ##        Old Drawing Code         ##
         #####################################
-        
+
         global _lightVector
 
-        #glEnable(GL_TEXTURE_3D)
-        #texture = self.LoadTexture()
-        #glBindTexture(GL_TEXTURE_2D, texture)
-        #glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
+        # glEnable(GL_TEXTURE_3D)
+        # texture = self.LoadTexture()
+        # glBindTexture(GL_TEXTURE_2D, texture)
+        # glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
 
-
-        #invT = np.linalg.inv(glGetDouble(GL_MODELVIEW_MATRIX)).transpose()
-        #glBegin(GL_QUADS)
-        #for n, surface in enumerate(self.surfaces):
+        # invT = np.linalg.inv(glGetDouble(GL_MODELVIEW_MATRIX)).transpose()
+        # glBegin(GL_QUADS)
+        # for n, surface in enumerate(self.surfaces):
         #    for vert in surface:
         #        norm = np.append(self.normals[vert[1]], 1)
         #        modelNorm = np.matmul(norm, invT)
         #        modelNorm = np.delete(modelNorm, 3)
         #        np.linalg.norm(modelNorm)
-
-                
 
         #        #if texture == None:
         #        dotP = np.dot(_lightVector, modelNorm)
@@ -222,7 +217,7 @@ class Cube:
         #        glColor3fv(self.color * mult)
 
         #        glVertex3fv(self.vertsTemp[vert[0]])
-        #glEnd()
+        # glEnd()
 
         ####################################
 

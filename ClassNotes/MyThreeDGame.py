@@ -3,7 +3,7 @@ from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from SlowCube import SlowCube
-
+from ClassNotes.Cube import Cube as Cube
 # Main Init
 pygame.init()
 size = width, height = 640, 480
@@ -18,7 +18,7 @@ glDepthFunc(GL_LESS)
 
 glTranslate(0.0, 0.0, -5)
 
-cube = SlowCube()
+cube = Cube()
 
 
 def Update(deltaTime):
