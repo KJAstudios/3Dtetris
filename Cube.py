@@ -26,10 +26,12 @@ class Cube:
 
         # Set id
         self.id = id
+        self.model_size = 0
 
         # Check if shape type is valid
         if self.type in shapeList:
             model = LoadOBJ(f"resources/models/{self.type}_tetris_piece.obj", self.color)
+            self.model_size = len(model)
         else:
             print('Major Error! Shape type not recognized!')
             # Would be good to enter code to delete 'self' if this occurs
@@ -179,7 +181,7 @@ class Cube:
                 glVertexAttribPointer(self.position, 3, GL_FLOAT, False, stride, self.vbo)
                 glVertexAttribPointer(self.color, 3, GL_FLOAT, False, stride, self.vbo + 12)
                 glVertexAttribPointer(self.vertex_normal, 3, GL_FLOAT, True, stride, self.vbo + 24)
-                glDrawArrays(GL_QUADS, 0, 24)
+                glDrawArrays(GL_QUADS, 0, self.model_size)
 
             finally:
                 self.vbo.unbind()
