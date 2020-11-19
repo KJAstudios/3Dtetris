@@ -4,9 +4,9 @@ import pygame
 import numpy as np
 import math
 from obj_loader_2 import LoadOBJ
-from gamecommon import shapeList, dataPuke
+from gamecommon import shapeList
 
-#_lightVector = np.asfarray([0, 0, 1]) <- Unused _lightvector
+_lightVector = np.asfarray([0, 0, 1]) #<- Unused _lightvector
 
 from OpenGL.arrays import vbo
 from OpenGL.GL import shaders
@@ -18,6 +18,7 @@ class Cube:
         # color of the shape
         # TODO change this to texture wrapping
         self.color = np.asfarray([0, 0, 1])
+        color = np.asfarray([0,0,1])
 
         # Get type of shape
         self.type = type
@@ -38,18 +39,52 @@ class Cube:
         ################################################
 
         # Set verts, surfaces, and normals
-        self.vertsTemp = np.asfarray(model["verts"])
-        self.surfaces = np.asarray(model["surfs"])
-        self.normals = np.asfarray(model["normals"])
+        #self.vertsTemp = np.asfarray(model["verts"])
+        #self.surfaces = np.asarray(model["surfs"])
+        #self.normals = np.asfarray(model["normals"])
         ###
 
         #######################
         ### NEED self.verts ###
         #######################
 
+        # For now just use default cube until obj loader is fixed. Use this cube to test texture/ui
+        # 3 positions, 3 colors, 3 normals, 2 UVs
+        self.verts = np.float32([(1, -1, -1, color[0], color[1], color[2], 0, 0, -1, 0, 0),
+                                    (1, 1, -1, color[0], color[1], color[2], 0, 0, -1, 1, 0),
+                                    (-1, 1, -1, color[0], color[1], color[2], 0, 0, -1, 1, 1),
+                                    (-1, -1, -1, color[0], color[1], color[2], 0, 0, -1, 0, 1),
+
+                                    (-1, -1, -1, color[0], color[1], color[2], -1, 0, 0, 0, 0),
+                                    (-1, 1, -1, color[0], color[1], color[2], -1, 0, 0, 1, 0),
+                                    (-1, 1, 1, color[0], color[1], color[2], -1, 0, 0, 1, 1),
+                                    (-1, -1, 1, color[0], color[1], color[2], -1, 0, 0, 0, 1),
+
+                                    (-1, -1, 1, color[0], color[1], color[2], 0, 0, 1, 0, 0),
+                                    (-1, 1, 1, color[0], color[1], color[2], 0, 0, 1, 1, 0),
+                                    (1, 1, 1, color[0], color[1], color[2], 0, 0, 1, 1, 1),
+                                    (1, -1, 1, color[0], color[1], color[2], 0, 0, 1, 0, 1),
+                                  
+                                    (1, -1, 1, color[0], color[1], color[2], 1, 0, 0, 0, 0),
+                                    (1, 1, 1, color[0], color[1], color[2], 1, 0, 0, 1, 0),
+                                    (1, 1, -1, color[0], color[1], color[2], 1, 0, 0, 1, 1),
+                                    (1, -1, -1, color[0], color[1], color[2], 1, 0, 0, 0, 1),
+                                  
+                                    (1, 1, -1, color[0], color[1], color[2], 0, 1, 0, 0, 0),
+                                    (1, 1, 1, color[0], color[1], color[2], 0, 1, 0, 1, 0),
+                                    (-1, 1, 1, color[0], color[1], color[2], 0, 1, 0, 1, 1),
+                                    (-1, 1, -1, color[0], color[1], color[2], 0, 1, 0, 0, 1),
+                                  
+                                    (1, -1, 1, color[0], color[1], color[2], 0, -1, 0, 0, 0),
+                                    (1, -1, -1, color[0], color[1], color[2], 0, -1, 0, 1, 0),
+                                    (-1, -1, -1, color[0], color[1], color[2], 0, -1, 0, 1, 1),
+                                    (-1, -1, 1, color[0], color[1], color[2], 0, -1, 0, 0, 1)
+                                    ])
+
+
         # Vertex Shader thing?
         self.VERTEX_SHADER = shaders.compileShader("""#version 130
-        unifrom mat4 invT;
+        uniform mat4 invT;
         attribute vec3 position;
         attribute vec3 color;
         attribute vec3 vertex_normal;
@@ -57,26 +92,26 @@ class Cube:
         void main()
         {
             vec4 norm = invT * vec4(vertex_normal,1.0);
-            gl_Position = gl_ModelViewProjectionMatrix * vec4(postion,1.0);
+            gl_Position = gl_ModelViewProjectionMatrix * vec4(position,1.0);
             vertex_color = vec4(color * min(1, max(0, norm[2])), 1.0);
         }""", GL_VERTEX_SHADER)
 
-        # Fragment Shader thing???
+        
         self.FRAGMENT_SHADER = shaders.compileShader("""#version 130 
         in vec4 vertex_color;
-        out vec4 FragColor;
+        out vec4 fragColor;
         void main()
         {
             fragColor = vertex_color;
         }""", GL_FRAGMENT_SHADER)
 
-        # Something more about shaders...
+        
         self.shader = shaders.compileProgram(self.VERTEX_SHADER, self.FRAGMENT_SHADER)
         self.vbo = vbo.VBO(self.verts) #<- this is where verts is processed
 
         self.uniformInvT = glGetUniformLocation(self.shader, "invT")
         self.position = glGetAttribLocation(self.shader, "position")
-        self.coloir = glGetAttribLocation(self.shader, "color")
+        self.color = glGetAttribLocation(self.shader, "color")
         self.vertex_normal = glGetAttribLocation(self.shader, "vertex_normal")
 
         # If necessary, translate based on pos
@@ -113,24 +148,25 @@ class Cube:
         # Texture width and height
         width = textureSurf.get_width()
         height = textureSurf.get_height()
-
         # Do all the crazy gl stuff
         glEnable(GL_TEXTURE_2D)
         textureID = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, textureID)
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+        #glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+        #glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+        #glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+        #glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+        #glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+        #glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        #glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        #glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureText)
 
         return textureID
 
     def DrawBlock(self):
+        
+        
         
         shaders.glUseProgram(self.shader)
         invT = np.linalg.inv(glGetDouble(GL_MODELVIEW_MATRIX)).transpose()
@@ -142,10 +178,11 @@ class Cube:
                 glEnableVertexAttribArray(self.color)
                 glEnableVertexAttribArray(self.vertex_normal)
                 stride = 44
-                glVertexAttributePointer(self.position, 3, GL_FLOAT, False, stride, self.vbo)
-                glVertexAttributePointer(self.color, 3, GL_FLOAT, False, stride, self.vbo+12)
-                glVertexAttributePointer(self.vertex_normal, 3, GL_FLOAT, True, stride, self.vbo+24)
+                glVertexAttribPointer(self.position, 3, GL_FLOAT, False, stride, self.vbo)
+                glVertexAttribPointer(self.color, 3, GL_FLOAT, False, stride, self.vbo+12)
+                glVertexAttribPointer(self.vertex_normal, 3, GL_FLOAT, True, stride, self.vbo+24)
                 glDrawArrays(GL_QUADS, 0, 24)
+
             finally:
                 self.vbo.unbind()
                 glDisableVertexAttribArray(self.position)
@@ -153,12 +190,14 @@ class Cube:
                 glDisableVertexAttribArray(self.vertex_normal)
         finally:
             shaders.glUseProgram(0)
-        
+
+    def OldDrawBlock(self):
+
         #####################################
         ##        Old Drawing Code         ##
         #####################################
         
-        #global _lightVector
+        global _lightVector
 
         #glEnable(GL_TEXTURE_3D)
         #texture = self.LoadTexture()
@@ -175,14 +214,14 @@ class Cube:
         #        modelNorm = np.delete(modelNorm, 3)
         #        np.linalg.norm(modelNorm)
 
-                #
+                
 
-                #if texture == None:
+        #        #if texture == None:
         #        dotP = np.dot(_lightVector, modelNorm)
         #        mult = max(min(dotP, 1), 0)
         #        glColor3fv(self.color * mult)
 
-        #        glVertex3fv(self.verts[vert[0]])
+        #        glVertex3fv(self.vertsTemp[vert[0]])
         #glEnd()
 
         ####################################
