@@ -4,9 +4,12 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from SlowCube import SlowCube
 from ClassNotes.Cube import Cube as Cube
+import ClassNotes.Border as Border
+import ClassNotes.GamePlay as GamePlay
+
 # Main Init
 pygame.init()
-size = width, height = 640, 480
+size = width, height = 640, 900
 screen = pygame.display.set_mode(size, DOUBLEBUF | OPENGL)
 
 glMatrixMode(GL_PROJECTION)
@@ -16,24 +19,29 @@ glMatrixMode(GL_MODELVIEW)
 glEnable(GL_DEPTH_TEST)
 glDepthFunc(GL_LESS)
 
-glTranslate(0.0, 0.0, -5)
+glTranslate(1.0, 0.0, -20)
+glRotate(-15, 0, 1, 0)
+glRotate(30, 1, 0, 0)
 
-cube = Cube()
+GamePlay.Init()
 
 
 def Update(deltaTime):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False
+        if GamePlay.ProcessEvent(event):
+            continue
 
-    cube.Update(deltaTime)
+    GamePlay.Update(deltaTime)
     return True
 
 
 def Render():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-    cube.Render()
+    GamePlay.Render()
+    Border.Render()
 
     pygame.display.flip()
 

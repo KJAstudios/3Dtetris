@@ -73,7 +73,8 @@ class Cube:
         self.axis = (3, 1, 1)
 
     def Update(self, deltaTime):
-        self.ang += 50.0 * deltaTime
+        pass
+        #self.ang += 50.0 * deltaTime
 
     def DrawBlock(self):
         global _lightVector
@@ -104,7 +105,7 @@ class Cube:
     def Render(self):
         m = glGetDouble(GL_MODELVIEW_MATRIX)
 
-        glRotatef(self.ang, *self.axis)
+        #glRotatef(self.ang, *self.axis)
 
         self.DrawBlock()
 
