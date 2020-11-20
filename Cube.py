@@ -1,15 +1,16 @@
-from OpenGL.GL import *
-from OpenGL.GLU import *
+
 import pygame
 import numpy as np
 import math
 from obj_to_vbo import LoadOBJ
-from gamecommon import shapeList
+from gamecommon import *
+from PIL import Image
 
 _lightVector = np.asfarray([0, 0, 1])  # <- Unused _lightvector
 
 from OpenGL.arrays import vbo
 from OpenGL.GL import shaders
+
 
 
 class Cube:
@@ -131,40 +132,66 @@ class Cube:
         # Axis of rotation (0,0,0) + self.pos
         self.axis = (self.pos[0], self.pos[1], self.pos[2])
 
+        # Load texture image
+        try:
+            self.textureSurf = Image.open(f"resources/textures/{self.type}_tetris_texture.jpg")
+            #print('first', list(self.textureSurf.getdata()))
+        except Error as e:
+            print(f'Major Error: {e}')
+            #print('Major Error! Texture Does not exist! Reverting to default color.')
+            return None
+
+        self.textureData = np.array(list(self.textureSurf.getdata()), np.uint8)
+        #print(self.textureData)
+
+
+        format = GL_RGB if self.textureData.shape[0] == 3 else GL_RGBA
+
+        self.textureGen = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, self.textureGen)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.textureSurf.width, self.textureSurf.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, self.textureData)
+        glEnable(GL_TEXTURE_2D)
+
     def Update(self, deltaTime, currentID):
         if self.id == currentID or currentID == -1:
             # Update Angle if current Shape
             self.ang += self.rotateSpeed * deltaTime
 
-    def LoadTexture(self):
-        # Load texture image
-        try:
-            textureSurf = pygame.image.load(f"resources/textures/{self.type}_tetris_texture.png")
-        except:
-            print('Error Loading Texture! Reverting to default color.')
-            return None
+    #def LoadTexture(self):
+    #    # Load texture image
+    #    try:
+    #        textureSurf = pygame.image.load(f"resources/textures/{self.type}_tetris_texture.png")
+    #    except:
+    #        print('Error Loading Texture! Reverting to default color.')
+    #        return None
 
-        # Convert it to text
-        textureText = pygame.image.tostring(textureSurf, "RGBA", 1)
+    #    # Convert it to text
+    #    textureText = pygame.image.tostring(textureSurf, "RGBA", 1)
 
-        # Texture width and height
-        width = textureSurf.get_width()
-        height = textureSurf.get_height()
-        # Do all the crazy gl stuff
-        glEnable(GL_TEXTURE_2D)
-        textureID = glGenTextures(1)
-        glBindTexture(GL_TEXTURE_2D, textureID)
-        # glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
-        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-        # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-        # glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureText)
+    #    # Texture width and height
+    #    width = textureSurf.get_width()
+    #    height = textureSurf.get_height()
+    #    # Do all the crazy gl stuff
+    #    glEnable(GL_TEXTURE_2D)
+    #    textureID = glGenTextures(1)
+    #    glBindTexture(GL_TEXTURE_2D, textureID)
+    #    # glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+    #    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+    #    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+    #    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    #    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    #    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    #    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    #    # glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+    #    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureText)
 
-        return textureID
+    #    return textureID
 
     def DrawBlock(self):
 
@@ -175,18 +202,17 @@ class Cube:
             self.vbo.bind()
             try:
                 glEnableVertexAttribArray(self.position)
-                glEnableVertexAttribArray(self.color)
+                #glEnableVertexAttribArray(self.color)
                 glEnableVertexAttribArray(self.vertex_normal)
                 stride = 44
                 glVertexAttribPointer(self.position, 3, GL_FLOAT, False, stride, self.vbo)
-                glVertexAttribPointer(self.color, 3, GL_FLOAT, False, stride, self.vbo + 12)
+                #glVertexAttribPointer(self.color, 3, GL_FLOAT, False, stride, self.vbo + 12)
                 glVertexAttribPointer(self.vertex_normal, 3, GL_FLOAT, True, stride, self.vbo + 24)
                 glDrawArrays(GL_QUADS, 0, self.model_size)
-
             finally:
                 self.vbo.unbind()
                 glDisableVertexAttribArray(self.position)
-                glDisableVertexAttribArray(self.color)
+                #glDisableVertexAttribArray(self.color)
                 glDisableVertexAttribArray(self.vertex_normal)
         finally:
             shaders.glUseProgram(0)

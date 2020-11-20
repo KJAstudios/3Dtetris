@@ -1,6 +1,7 @@
 # Game Common to store all global variables
 import numpy as np
-
+from OpenGL.GL import *
+from OpenGL.GLU import *
 
 ## List of possible tetris block shapes
 # Used for checking if shape is valid or for randomly getting shapes
