@@ -58,23 +58,27 @@ class Cube:
         attribute vec3 position;
         attribute vec3 color;
         attribute vec3 vertex_normal;
+        vec2 aTexCoord;
         out vec4 vertex_color;
+        out vec2 TexCoord;
         void main()
         {
             vec4 norm = invT * vec4(vertex_normal,1.0);
             gl_Position = gl_ModelViewProjectionMatrix * vec4(position,1.0);
             vertex_color = vec4(color * min(1, max(0, norm[2])), 1.0);
+            TexCoord = aTexCoord;
         }""", GL_VERTEX_SHADER)
 
         # Fragment Shader thing?
         self.FRAGMENT_SHADER = shaders.compileShader("""#version 130 
         in vec4 vertex_color;
+        in vec2 TexCoord;
         out vec4 fragColor;
 
         uniform sampler2D texUnit; 
 
         void main() {
-            fragColor = texture2D(texUnit,vec2(vertex_color));
+            fragColor = texture(texUnit, TexCoord);
         }""", GL_FRAGMENT_SHADER)
 
         ####
@@ -90,9 +94,14 @@ class Cube:
         self.vbo = vbo.VBO(self.verts)  # <- this is where verts is processed
 
         self.uniformInvT = glGetUniformLocation(self.shader, "invT")
-        self.position = glGetAttribLocation(self.shader, "position")
-        self.color = glGetAttribLocation(self.shader, "color")
-        self.vertex_normal = glGetAttribLocation(self.shader, "vertex_normal")
+        glBindAttribLocation(self.shader, 0, "position")
+        self.position = GLuint(0)
+        glBindAttribLocation(self.shader, 1, "color")
+        self.color = GLuint(1)
+        glBindAttribLocation(self.shader, 2, "vertex_normal")
+        self.vertex_normal = GLuint(2)
+        glBindAttribLocation(self.shader, 3, "aTexCoord")
+        self.texCoord = GLuint(3)
 
         self.texUnitUniform = glGetUniformLocation(self.shader, 'texUnit')
 
@@ -169,10 +178,12 @@ class Cube:
                 glEnableVertexAttribArray(self.position)
                 glEnableVertexAttribArray(self.color)
                 glEnableVertexAttribArray(self.vertex_normal)
+                glEnableVertexAttribArray(self.texCoord)
                 stride = 44
                 glVertexAttribPointer(self.position, 3, GL_FLOAT, False, stride, self.vbo)
                 glVertexAttribPointer(self.color, 3, GL_FLOAT, False, stride, self.vbo + 12)
                 glVertexAttribPointer(self.vertex_normal, 3, GL_FLOAT, True, stride, self.vbo + 24)
+                glVertexAttribPointer(self.texCoord, 2, GL_FLOAT, False, stride, self.vbo + 36)
                 glDrawArrays(GL_QUADS, 0, self.model_size)
                 
                 
@@ -181,6 +192,7 @@ class Cube:
                 glDisableVertexAttribArray(self.position)
                 glDisableVertexAttribArray(self.color)
                 glDisableVertexAttribArray(self.vertex_normal)
+                glDisableVertexAttribArray(self.texCoord)
         finally:
             shaders.glUseProgram(0)
             
