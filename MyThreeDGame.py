@@ -17,8 +17,6 @@ glDepthFunc(GL_LESS)
 
 glTranslate(0.0, 0.0, -15)
 
-blockList = []
-
 blockList.append(Cube(len(blockList), type="box", pos=(-5, 3, 0)))
 blockList.append(Cube(len(blockList), type="T", rotateSpeed=-150.0, pos=(0, 3, 0)))
 blockList.append(Cube(len(blockList), type="S", rotateSpeed=175.0, pos=(5, 3, 0)))
@@ -76,6 +74,10 @@ def Render(screen):
     color = (255,100,100)
     rtext = 'hello world'
     text.Render(screen, rtext, 20, 50, 1, color)
+
+    instructions = 'Press num keys to swich blocks'
+    text.Render(screen, instructions, 10, 620, 0.5, color)
+
     pygame.display.flip()
 
 
