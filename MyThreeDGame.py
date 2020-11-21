@@ -26,9 +26,9 @@ blockList.append(Cube(len(blockList), type="straight", rotateSpeed=125.0, pos=(-
 blockList.append(Cube(len(blockList), type="L", rotateSpeed=-125.0, pos=(0, -3, 0)))
 
 # import UI
-import UI.UI as UI
+import UI.UIText as UIText
 
-UI.Init()
+UIText.Init(screen)
 
 currentShapeID = -1
 
@@ -61,7 +61,7 @@ def Update(deltaTime):
         # id can be used to determine if a block should be able to be rotated
         block.Update(deltaTime, currentShapeID)
 
-    UI.Update(deltaTime)
+    # UI.Update(deltaTime)
 
     return True
 
@@ -71,7 +71,7 @@ def Render(screen):
 
     for block in blockList:
         block.Render()
-    UI.Render(screen)
+    UIText.Render(screen, 'hello world', 20, 50, 1, (255,100,100))
     pygame.display.flip()
 
 

@@ -1,20 +1,21 @@
-# from World.WorldCommon import ScreenSize
-import freetype
-import glm
 from OpenGL.GL import *
+from OpenGL.GLU import *
+
 from OpenGL.GL import shaders
 
-Characters = dict()
+
+import freetype
+import glm
+
+import numpy as np
 
 
-# TODO resources used:
-# tutorial: https://learnopengl.com/In-Practice/Text-Rendering
-# tutorial code: https://learnopengl.com/code_viewer_gh.php?code=src/7.in_practice/2.text_rendering/text_rendering.cpp
-# attempted python implementation: https://stackoverflow.com/questions/63836707/how-to-render-text-with-pyopengl
-# pyopenGL documentation: http://pyopengl.sourceforge.net/documentation/manual-3.0/index.html#GL
+fontfile = "C:\Windows\Fonts\Arial.ttf"
 
-class Character:
 
+# fontfile = r'C:\source\resource\fonts\gnu-freefont_freesans\freesans.ttf'
+
+class CharacterSlot:
     def __init__(self, texture, glyph):
         self.texture = texture
         self.textureSize = (glyph.bitmap.width, glyph.bitmap.rows)
@@ -29,83 +30,156 @@ class Character:
             raise RuntimeError('unknown glyph type')
 
 
-class UIText:
-    def __init__(self, element):
-        self.placeholder = 'Built to avoid errors!'
-        self.element = element
+def _get_rendering_buffer(xpos, ypos, w, h, zfix=0.0):
+    return np.asarray([
+        xpos, ypos - h, 0, 0,
+        xpos, ypos, 0, 1,
+              xpos + w, ypos, 1, 1,
+        xpos, ypos - h, 0, 0,
+              xpos + w, ypos, 1, 1,
+              xpos + w, ypos - h, 1, 0
+    ], np.float32)
 
-    def ProcessEvent(self, event):
+
+VERTEX_SHADER = """
+        #version 330 core
+        layout (location = 0) in vec4 vertex; // <vec2 pos, vec2 tex>
+        out vec2 TexCoords;
+
+        uniform mat4 projection;
+
+        void main()
+        {
+            gl_Position = projection * vec4(vertex.xy, 0.0, 1.0);
+            TexCoords = vertex.zw;
+        }
+       """
+
+FRAGMENT_SHADER = """
+        #version 330 core
+        in vec2 TexCoords;
+        out vec4 color;
+
+        uniform sampler2D text;
+        uniform vec3 textColor;
+
+        void main()
+        {    
+            vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r);
+            color = vec4(textColor, 1.0) * sampled;
+        }
+        """
+
+shaderProgram = None
+Characters = dict()
+VBO = None
+VAO = None
+
+class UIText:
+    def Init(screen):
+        global VERTEXT_SHADER
+        global FRAGMENT_SHADER
+        global shaderProgram
+        global Characters
+        global VBO
+        global VAO
+
+        # compiling shaders
+        vertexshader = shaders.compileShader(VERTEX_SHADER, GL_VERTEX_SHADER)
+        fragmentshader = shaders.compileShader(FRAGMENT_SHADER, GL_FRAGMENT_SHADER)
+
+        # creating shaderProgram
+        shaderProgram = shaders.compileProgram(vertexshader, fragmentshader)
+        glUseProgram(shaderProgram)
+
+        # get projection
+        # problem
+
+        shader_projection = glGetUniformLocation(shaderProgram, "projection")
+        projection = glm.ortho(0, 640, 640, 0)
+        glUniformMatrix4fv(shader_projection, 1, GL_FALSE, glm.value_ptr(projection))
+
+        # disable byte-alignment restriction
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+
+        face = freetype.Face(fontfile)
+        face.set_char_size(48 * 64)
+
+        # load first 128 characters of ASCII set
+        for i in range(0, 128):
+            face.load_char(chr(i))
+            glyph = face.glyph
+
+            # generate texture
+            texture = glGenTextures(1)
+            glBindTexture(GL_TEXTURE_2D, texture)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, glyph.bitmap.width, glyph.bitmap.rows, 0,
+                         GL_RED, GL_UNSIGNED_BYTE, glyph.bitmap.buffer)
+
+            # texture options
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+
+            # now store character for later use
+            Characters[chr(i)] = CharacterSlot(texture, glyph)
+
+        glBindTexture(GL_TEXTURE_2D, 0)
+
+        # configure VAO/VBO for texture quads
+        VAO = glGenVertexArrays(1)
+        glBindVertexArray(VAO)
+        VBO = glGenBuffers(1)
+        glBindBuffer(GL_ARRAY_BUFFER, VBO)
+        glBufferData(GL_ARRAY_BUFFER, 6 * 4 * 4, None, GL_DYNAMIC_DRAW)
+        glEnableVertexAttribArray(0)
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, None)
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindVertexArray(0)
+
+    def Update(deltaTime):
         pass
 
+    def Render(screen, text, x, y, scale, color):
+        global shaderProgram
+        global Characters
+        global VBO
+        global VAO
 
-fontfile = "C:\Windows\Fonts\Arial.ttf"
+        face = freetype.Face(fontfile)
+        face.set_char_size(48 * 64)
+        glUniform3f(glGetUniformLocation(shaderProgram, "textColor"),
+                    color[0] / 255, color[1] / 255, color[2] / 255)
 
+        glActiveTexture(GL_TEXTURE0)
 
-def Init():
-    global Characters
-    global shader
-    face = freetype.Face(fontfile)
-    face.set_char_size(48 * 64)
-    # load first 128 characters of ASCII set
-    for i in range(0, 128):
-        face.load_char(chr(i))
-        glyph = face.glyph
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-        # generate texture
-        texture = glGenTextures(1)
-        glBindTexture(GL_TEXTURE_2D, texture)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, glyph.bitmap.width, glyph.bitmap.rows, 0,
-                     GL_RED, GL_UNSIGNED_BYTE, glyph.bitmap.buffer)
+        glBindVertexArray(VAO)
+        for c in text:
+            ch = Characters[c]
+            w, h = ch.textureSize
+            w = w * scale
+            h = h * scale
+            vertices = _get_rendering_buffer(x, y, w, h)
 
-        # texture options
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+            # render glyph texture over quad
+            glBindTexture(GL_TEXTURE_2D, ch.texture)
+            # update content of VBO memory
+            glBindBuffer(GL_ARRAY_BUFFER, VBO)
+            glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.nbytes, vertices)
 
-        # now store character for later use
-        Characters[chr(i)] = Character(texture, glyph)
+            glBindBuffer(GL_ARRAY_BUFFER, 0)
+            # render quad
+            glDrawArrays(GL_TRIANGLES, 0, 6)
+            # now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+            x += (ch.advance >> 6) * scale
 
-    glBindTexture(GL_TEXTURE_2D, 0)
-
-    VERTEX_SHADER = shaders.compileShader("""#version 330 core
-                        layout (location = 0) in vec4 vertex;
-                        out vec2 TexCoords;                
-                        uniform mat4 projection;                
-                        void main()
-                        {
-                            gl_Position = projection * vec4(vertex.xy, 0.0, 1.0);
-                            TexCoords = vertex.zw;
-                        }""", GL_VERTEX_SHADER)
-
-    FRAGMENT_SHADER = shaders.compileShader("""#version 330 core
-                        in vec2 TexCoords;
-                        out vec4 color;
-                        
-                        uniform sampler2D text;
-                        uniform vec3 textColor;
-                        
-                        void main()
-                        {    
-                            vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r);
-                            color = vec4(textColor, 1.0) * sampled;
-                        }""", GL_FRAGMENT_SHADER)
-    glEnable(GL_BLEND)
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-
-    shader = shaders.compileProgram(VERTEX_SHADER, FRAGMENT_SHADER)
+        glBindVertexArray(0)
+        glBindTexture(GL_TEXTURE_2D, 0)
 
 
-def Render():
-    global shader
-    projection_matrix = glm.ortho(0.0, 640.0, 0.0, 480.0)
-    glUseProgram(shader)
-    VAO = GLuint(glGenVertexArrays(1))
-    VBO = GLuint(glGenBuffers(1))
-    glBindVertexArray(VAO)
-    glBindBuffer(GL_ARRAY_BUFFER, VBO)
-    glBufferData(GL_ARRAY_BUFFER, 6 * 4 * 4, None, GL_DYNAMIC_DRAW)
-    glEnableVertexAttribArray(0)
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, None)
-    glBindBuffer(GL_ARRAY_BUFFER, 0)
-    glBindVertexArray(0)
+
+
