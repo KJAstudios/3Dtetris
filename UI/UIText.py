@@ -22,7 +22,19 @@ class Character:
         else:
             raise RuntimeError('unknown glyph type')
 
+class UIText:
+    def __init__(self,element):
+        self.placeholder = 'Built to avoid errors!'
+        self.element = element
 
+    def ProcessEvent(self,event):
+        pass
+
+    def Update(self,deltaTime):
+        pass
+
+    def Render(self,screen):
+        pass
 
 fontfile="C:\Windows\Fonts\Arial.ttf"
 def Init():

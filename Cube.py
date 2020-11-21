@@ -19,8 +19,8 @@ class Cube:
 
         # color of the shape
         # TODO change this to texture wrapping
-        self.color = np.asfarray([0, 0, 1])
-        color = np.asfarray([0, 0, 1])
+        self.color = np.asfarray([1, 1, 1])
+        color = np.asfarray([1, 1, 1])
 
         # Get type of shape
         self.type = type
@@ -135,15 +135,11 @@ class Cube:
         # Load texture image
         try:
             self.textureSurf = Image.open(f"resources/textures/{self.type}_tetris_texture.jpg")
-            #print('first', list(self.textureSurf.getdata()))
         except Error as e:
             print(f'Major Error: {e}')
-            #print('Major Error! Texture Does not exist! Reverting to default color.')
             return None
 
         self.textureData = np.array(list(self.textureSurf.getdata()), np.uint8)
-        #print(self.textureData)
-
 
         format = GL_RGB if self.textureData.shape[0] == 3 else GL_RGBA
 
@@ -155,7 +151,7 @@ class Cube:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.textureSurf.width, self.textureSurf.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, self.textureData)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.textureSurf.width, self.textureSurf.height, 0, GL_RGB, GL_UNSIGNED_BYTE, self.textureData)
         glEnable(GL_TEXTURE_2D)
 
     def Update(self, deltaTime, currentID):
@@ -195,6 +191,7 @@ class Cube:
 
     def DrawBlock(self):
 
+        
         shaders.glUseProgram(self.shader)
         invT = np.linalg.inv(glGetDouble(GL_MODELVIEW_MATRIX)).transpose()
         glUniformMatrix4fv(self.uniformInvT, 1, False, invT)
@@ -202,20 +199,30 @@ class Cube:
             self.vbo.bind()
             try:
                 glEnableVertexAttribArray(self.position)
-                #glEnableVertexAttribArray(self.color)
+                glEnableVertexAttribArray(self.color)
                 glEnableVertexAttribArray(self.vertex_normal)
                 stride = 44
                 glVertexAttribPointer(self.position, 3, GL_FLOAT, False, stride, self.vbo)
-                #glVertexAttribPointer(self.color, 3, GL_FLOAT, False, stride, self.vbo + 12)
+                glVertexAttribPointer(self.color, 3, GL_FLOAT, False, stride, self.vbo + 12)
                 glVertexAttribPointer(self.vertex_normal, 3, GL_FLOAT, True, stride, self.vbo + 24)
                 glDrawArrays(GL_QUADS, 0, self.model_size)
+                
+                
             finally:
                 self.vbo.unbind()
                 glDisableVertexAttribArray(self.position)
-                #glDisableVertexAttribArray(self.color)
+                glDisableVertexAttribArray(self.color)
                 glDisableVertexAttribArray(self.vertex_normal)
         finally:
             shaders.glUseProgram(0)
+            glClearColor(0.0, 0.0, 0.0, 1.0)
+            
+            
+            glEnable(GL_TEXTURE_2D)
+            glBindTexture(GL_TEXTURE_2D, self.textureGen)
+            glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
+            #glEnable(GL_DEPTH_TEST)
+            
 
     def OldDrawBlock(self):
 
