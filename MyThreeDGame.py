@@ -75,7 +75,7 @@ def Render(screen):
     rtext = 'hello world'
     text.Render(screen, rtext, 20, 50, 1, color)
 
-    instructions = 'Press num keys to swich blocks'
+    instructions = 'Press num keys to switch blocks'
     text.Render(screen, instructions, 10, 620, 0.5, color)
 
     pygame.display.flip()
