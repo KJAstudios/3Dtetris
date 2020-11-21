@@ -17,11 +17,11 @@ glDepthFunc(GL_LESS)
 
 glTranslate(0.0, 0.0, -15)
 
-blockList.append(Cube(len(blockList), type="box", pos=(-5, 3, 0)))
-blockList.append(Cube(len(blockList), type="T", rotateSpeed=-150.0, pos=(0, 3, 0)))
-blockList.append(Cube(len(blockList), type="S", rotateSpeed=175.0, pos=(5, 3, 0)))
-blockList.append(Cube(len(blockList), type="straight", rotateSpeed=125.0, pos=(-5, -3, 0)))
-blockList.append(Cube(len(blockList), type="L", rotateSpeed=-125.0, pos=(0, -3, 0)))
+blockList.append(Cube(type="box", pos=(-5, 3, 0)))
+blockList.append(Cube(type="T", rotateSpeed=-150.0, pos=(0, 3, 0)))
+blockList.append(Cube(type="S", rotateSpeed=175.0, pos=(5, 3, 0)))
+blockList.append(Cube(type="straight", rotateSpeed=125.0, pos=(-5, -3, 0)))
+blockList.append(Cube(type="L", rotateSpeed=-125.0, pos=(0, -3, 0)))
 
 # import UI
 from UI.UIText import UIText

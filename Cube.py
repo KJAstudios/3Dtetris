@@ -20,7 +20,7 @@ from OpenGL.GL import shaders
 
 
 class Cube:
-    def __init__(self, id, type=None, rotateSpeed=100.0, pos=(0, 0, 0)):
+    def __init__(self, type=None, rotateSpeed=100.0, pos=(0, 0, 0)):
         global shapeList
 
         # color of the shape
@@ -32,7 +32,9 @@ class Cube:
         self.type = type
 
         # Set id
-        self.id = id
+        self.id = blockID[0]
+        blockID[0] += 1
+
         self.model_size = 0
 
         # Check if shape type is valid
@@ -68,9 +70,11 @@ class Cube:
         self.FRAGMENT_SHADER = shaders.compileShader("""#version 130 
         in vec4 vertex_color;
         out vec4 fragColor;
-        void main()
-        {
-            fragColor = vertex_color;
+
+        uniform sampler2D texUnit; 
+
+        void main() {
+            fragColor = texture2D(texUnit,vec2(vertex_color));
         }""", GL_FRAGMENT_SHADER)
 
         ####
@@ -78,6 +82,10 @@ class Cube:
         # Compile Shader
         self.shader = shaders.compileProgram(self.VERTEX_SHADER, self.FRAGMENT_SHADER)
         
+        # Core OpenGL requires that at least one OpenGL vertex array be bound
+        VAO = glGenVertexArrays(1)
+        glBindVertexArray(VAO)
+
         # The vbo thing does something
         self.vbo = vbo.VBO(self.verts)  # <- this is where verts is processed
 
@@ -85,6 +93,8 @@ class Cube:
         self.position = glGetAttribLocation(self.shader, "position")
         self.color = glGetAttribLocation(self.shader, "color")
         self.vertex_normal = glGetAttribLocation(self.shader, "vertex_normal")
+
+        self.texUnitUniform = glGetUniformLocation(self.shader, 'texUnit')
 
         # If necessary, translate shape location based on pos
         self.pos = pos
@@ -117,6 +127,7 @@ class Cube:
         ### Load Texture Code Initially
 
         # This is the texture code that initializes the textures.
+        
         self.textureGen = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, self.textureGen)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
@@ -163,6 +174,7 @@ class Cube:
             shaders.glUseProgram(0)
             
             ## My Added Texture Code ##
+            #glUniform1i(self.texUnitUniform, 0)
             glEnable(GL_TEXTURE_2D)
             glBindTexture(GL_TEXTURE_2D, self.textureGen)
             glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
