@@ -12,7 +12,6 @@ from OpenGL.arrays import vbo
 from OpenGL.GL import shaders
 
 
-
 class Cube:
     def __init__(self, id, type=None, rotateSpeed=100.0, pos=(0, 0, 0)):
         global shapeList
