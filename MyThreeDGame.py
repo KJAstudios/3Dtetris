@@ -26,9 +26,10 @@ blockList.append(Cube(len(blockList), type="straight", rotateSpeed=125.0, pos=(-
 blockList.append(Cube(len(blockList), type="L", rotateSpeed=-125.0, pos=(0, -3, 0)))
 
 # import UI
-import UI.UIText as UIText
+from UI.UIText import UIText
 
-UIText.Init(screen)
+text = UIText()
+text.Init()
 
 currentShapeID = -1
 
@@ -54,7 +55,7 @@ def Update(deltaTime):
                 currentShapeID = 5
             elif event.key == pygame.K_7:
                 currentShapeID = -1
-        if UI.ProcessEvent(event) == True:
+        #if UI.ProcessEvent(event) == True:
             continue
 
     for id, block in enumerate(blockList):
@@ -67,11 +68,14 @@ def Update(deltaTime):
 
 
 def Render(screen):
+    global text
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
     for block in blockList:
         block.Render()
-    UIText.Render(screen, 'hello world', 20, 50, 1, (255,100,100))
+    color = (255,100,100)
+    rtext = 'hello world'
+    text.Render(screen, rtext, 20, 50, 1, color)
     pygame.display.flip()
 
 

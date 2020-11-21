@@ -76,7 +76,7 @@ VBO = None
 VAO = None
 
 class UIText:
-    def Init(screen):
+    def Init(self):
         global VERTEXT_SHADER
         global FRAGMENT_SHADER
         global shaderProgram
@@ -141,7 +141,7 @@ class UIText:
     def Update(deltaTime):
         pass
 
-    def Render(screen, text, x, y, scale, color):
+    def Render(self, screen, text, x, y, scale, color):
         global shaderProgram
         global Characters
         global VBO
@@ -149,8 +149,10 @@ class UIText:
 
         face = freetype.Face(fontfile)
         face.set_char_size(48 * 64)
-        glUniform3f(glGetUniformLocation(shaderProgram, "textColor"),
-                    color[0] / 255, color[1] / 255, color[2] / 255)
+        glUseProgram(shaderProgram)
+        location = glGetUniformLocation(shaderProgram, "textColor")
+        glUniform3f(location,
+                    GLfloat(color[0] / 255),GLfloat(color[1] / 255), GLfloat(color[2] / 255))
 
         glActiveTexture(GL_TEXTURE0)
 
