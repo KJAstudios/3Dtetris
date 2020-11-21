@@ -111,6 +111,9 @@ class Cube:
         # Axis of rotation (0,0,0) + self.pos
         self.axis = (self.pos[0], self.pos[1], self.pos[2])
 
+        self.textureGen = self.load_texture()
+
+    def load_texture(self):
         # Load texture image
         try:
             self.textureSurf = Image.open(f"resources/textures/{self.type}_tetris_texture.jpg")
@@ -128,18 +131,20 @@ class Cube:
 
         # This is the texture code that initializes the textures.
         
-        self.textureGen = glGenTextures(1)
-        glBindTexture(GL_TEXTURE_2D, self.textureGen)
+        textureID = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, textureID)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+        #glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.textureSurf.width, self.textureSurf.height, 0, GL_RGB, GL_UNSIGNED_BYTE, self.textureData)
-        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, 0)
 
         ###
+
+        return textureID
 
     def Update(self, deltaTime, currentID):
         if self.id == currentID or currentID == -1:
@@ -147,6 +152,12 @@ class Cube:
             self.ang += self.rotateSpeed * deltaTime
 
     def DrawBlock(self):
+        ## My Added Texture Code ##
+            
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.textureGen)
+
+        ##
 
         ### This is the Professor's code used to render the block with shaders ###
         shaders.glUseProgram(self.shader)
@@ -173,12 +184,9 @@ class Cube:
         finally:
             shaders.glUseProgram(0)
             
-            ## My Added Texture Code ##
-            #glUniform1i(self.texUnitUniform, 0)
-            glEnable(GL_TEXTURE_2D)
-            glBindTexture(GL_TEXTURE_2D, self.textureGen)
-            glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
-            ##
+           
+            glBindTexture(GL_TEXTURE_2D, 0)
+            
 
         ###            
 
