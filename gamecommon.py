@@ -5,7 +5,30 @@ from OpenGL.GLU import *
 
 ## List of possible tetris block shapes
 # Used for checking if shape is valid or for randomly getting shapes
-shapeList = ['box','S','L','straight','T']
+shapeList = ['box', 'S', 'L', 'straight', 'T']
+
+## Dictionary of vertices per type
+
+shapeCornerDict = {'box': [(0, 0, 0), (1, 0, 0),
+                           (1, 1, 0), (0, 1, 0),
+
+                           (0, 0, -1), (1, 0, -1),
+                           (1, 1, -1), (0, 1, -1)],
+
+                   'S': [(0, 0, 0), (0, 1, 0),
+                                    (0, 1, -1), (0, 2, -1)],
+
+                   'L': [(0, 0, 0),
+                         (0, 0, -1),
+                         (0, 0, -2), (0, 1, -2)],
+
+                   'straight': [(0, 0, 0),
+                                (0, 0, -1),
+                                (0, 0, -2),
+                                (0, 0, -3)],
+
+                   'T': [(0, 0, 0), (0, 1, 0), (0, 2, 0),
+                                    (0, 1, -1)]}
 
 ## List of existing blocks
 blockList = []
@@ -21,7 +44,7 @@ newBlock = [0]
 ### Game Grid
 # 3D numpy array 8 x 8 x 10, zero means empty, other numbers refer to block id
 
-gameGrid = np.zeros((8,8,10))
+gameGrid = np.zeros((8, 8, 10))
 
 # Example:
 # gameGrid = [[[0,0,0,0,0,0,0,2],

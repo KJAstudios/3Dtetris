@@ -17,11 +17,11 @@ from OpenGL.GL import shaders
 # Presumably, the reason textures are not working has to do with the shaders.
 # 
 
-
-
 class Cube:
-    def __init__(self, type=None, rotateSpeed=100.0, pos=(0, 0, 10)):
+    def __init__(self, type=None, rotateSpeed=100.0, pos=[0, 0, 10]):
         global shapeList
+        global gameGrid
+        global shapeCornerDict
 
         # color of the shape
         self.color = np.asfarray([1, 1, 1])
@@ -59,17 +59,27 @@ class Cube:
         #self.correctShader()
         self.incorrectShader()
 
+        #######################################################
 
         # If necessary, translate shape location based on pos
-        self.pos = pos
-        if self.pos != (0, 0, 0):
+        self.pos = pos.copy()
+        self.previousPos = pos.copy()
+        if self.pos != [0, 0, 10]:
             for i in self.verts:
                 i[0] += self.pos[0]
                 i[1] += self.pos[1]
                 i[2] += self.pos[2]
+        else:
+            for i in self.verts:
+                i[2] += 10
 
         # Starting Angle
         self.ang = 0
+
+        # Insert block into array
+        blocks = shapeCornerDict[self.type]
+
+
         # Get speed of rotation
         self.rotateSpeed = rotateSpeed
         # Axis of rotation (0,0,0) + self.pos
@@ -91,7 +101,9 @@ class Cube:
         # Change color format if applicable
         format = GL_RGB if self.textureData.shape[0] == 3 else GL_RGBA
 
-        ### Load Texture Code Initially
+        ###############################
+        # Load Texture Code Initially #
+        ###############################
 
         # This is the texture code that initializes the textures.
         
@@ -102,11 +114,11 @@ class Cube:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
-        #glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+        # glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.textureSurf.width, self.textureSurf.height, 0, GL_RGB, GL_UNSIGNED_BYTE, self.textureData)
         glBindTexture(GL_TEXTURE_2D, 0)
 
-        ###
+        ################################
 
         return textureID
 
@@ -222,10 +234,20 @@ class Cube:
         # if (space is clear):
         #     (move down)
         # else:
-        #     (indicate a new block must be summoned)      
+        #     (indicate a new block must be summoned)
 
-        pass
-        
+        if self.pos != self.previousPos:
+
+            if self.id == 1:
+                print(f'Previous position {self.previousPos}')
+                print(f'Current position {self.pos}')
+            for i in self.verts:
+                i[0] += self.pos[0]
+                i[1] += self.pos[1]
+                i[2] += self.pos[2]
+
+            self.previousPos = self.pos.copy()
+
         # Blocks will not automatically rotate for now
         #if self.id == currentID or currentID == -1:
             # Update Angle if self is a current Shape

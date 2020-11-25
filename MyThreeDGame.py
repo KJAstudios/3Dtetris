@@ -23,13 +23,16 @@ glMatrixMode(GL_MODELVIEW)
 glEnable(GL_DEPTH_TEST)
 glDepthFunc(GL_LESS)
 
-glTranslate(0.0, 0.0, -15)
+glTranslate(0.0, -7.0, -35.0)
+glRotate(-15, 0, 1, 0)
+glRotate(-7, 0, 0, 1)
+glRotate(-35, 1, 0, 0)
 
-blockList.append(Cube(type="box", pos=(-5, 3, 0)))
-blockList.append(Cube(type="T", rotateSpeed=-150.0, pos=(0, 3, 0)))
-blockList.append(Cube(type="S", rotateSpeed=175.0, pos=(5, 3, 0)))
-blockList.append(Cube(type="straight", rotateSpeed=125.0, pos=(-5, -3, 0)))
-blockList.append(Cube(type="L", rotateSpeed=-125.0, pos=(0, -3, 0)))
+blockList.append(Cube(type="box", pos=[-5, 6, 10]))
+blockList.append(Cube(type="T", rotateSpeed=-150.0, pos=[0, 6, 10]))
+blockList.append(Cube(type="S", rotateSpeed=175.0, pos=[5, 6, 10]))
+blockList.append(Cube(type="straight", rotateSpeed=125.0, pos=[-5, 0, 10]))
+blockList.append(Cube(type="L", rotateSpeed=-125.0, pos=[0, 0, 10]))
 
 # import UI
 from UI.UIText import UIText
@@ -38,7 +41,6 @@ text = UIText()
 text.Init()
 
 currentShapeID = -1
-
 
 def Update(deltaTime):
     global currentShapeID
@@ -68,6 +70,8 @@ def Update(deltaTime):
         # id can be used to determine if a block should be able to be rotated
         block.Update(deltaTime, currentShapeID)
 
+
+
     # UI.Update(deltaTime)
 
     return True
@@ -79,9 +83,11 @@ def Render(screen):
 
     for block in blockList:
         block.Render()
-    color = (255,100,100)
+    color = (255, 0, 0)
     rtext = 'hello world'
     text.Render(screen, rtext, 20, 50, 1, color)
+
+
 
     #instructions = 'Press num keys to switch blocks'
     #text.Render(screen, instructions, 10, 620, 0.5, color)
@@ -91,13 +97,16 @@ def Render(screen):
 
 _gTickLastFrame = pygame.time.get_ticks()
 _gDeltaTime = 0.0
-timer = 0
+timer = 0  # Timer for testing different mechanics
+
 while Update(_gDeltaTime):
     Render(screen)
     t = pygame.time.get_ticks()
     _gDeltaTime = (t - _gTickLastFrame) / 1000.0
     _gTickLastFrame = t
     timer += 1
-    #if timer > 50:
-    #    blockList[1]._delete()
-    #    timer = 0
+
+    if timer > 55:
+        blockList[0].pos[2] += 1
+        timer = 0
+
