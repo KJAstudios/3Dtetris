@@ -49,64 +49,16 @@ class Cube:
         # The array of shape properties
         self.verts = np.float32(model)
 
-        # Vertex Shader thing?
-        self.VERTEX_SHADER = shaders.compileShader("""#version 130
-        uniform mat4 invT;
-        attribute vec3 position;
-        attribute vec3 color;
-        attribute vec3 vertex_normal;
-        attribute vec2 aTexCoord;
-        out vec4 vertex_color;
-        out vec2 TexCoord;
-        void main()
-        {
-            vec4 norm = invT * vec4(vertex_normal,0.0);
-            gl_Position = gl_ModelViewProjectionMatrix * vec4(position,1.0);
-            vertex_color = vec4(color * min(1, max(0, norm[2])), 1.0);
-            TexCoord = aTexCoord;
-        }""", GL_VERTEX_SHADER)
+        #######################################################
+        # RIGHT HERE IS WHERE SHADER CODE IS CHANGED          #
+        # IN CASE SHADER/TEXTURE IMPLEMENTATION DIDN'T WORK,  #
+        # SWITCH correctShader() TO incorrectShader() AND     #
+        # SWITCH DrawBlock() to incorrectDrawBlock in Render()#
+        #######################################################
 
-        # Fragment Shader thing?
-        self.FRAGMENT_SHADER = shaders.compileShader("""#version 130 
-        precision highp float;
+        #self.correctShader()
+        self.incorrectShader()
 
-        in vec4 vertex_color;
-        in vec2 TexCoord;
-        out vec4 fragColor;
-
-        uniform sampler2D texUnit; 
-
-        void main() {
-            fragColor = texture(texUnit, TexCoord);
-        }""", GL_FRAGMENT_SHADER)
-
-        # Compile Shader
-        self.shader = shaders.compileProgram(self.VERTEX_SHADER, self.FRAGMENT_SHADER)
-        
-        # Core OpenGL requires that at least one OpenGL vertex array be bound
-        VAO = glGenVertexArrays(1)
-        glBindVertexArray(VAO)
-
-        # The vbo thing does something
-        self.vbo = vbo.VBO(self.verts)  # <- this is where verts is processed
-
-        self.uniformInvT = glGetUniformLocation(self.shader, "invT")
-
-        glBindAttribLocation(self.shader, 0, "position")
-        self.position = GLuint(0)
-        glBindAttribLocation(self.shader, 1, "color")
-        self.color = GLuint(1)
-        glBindAttribLocation(self.shader, 2, "vertex_normal")
-        self.vertex_normal = GLuint(2)
-        glBindAttribLocation(self.shader, 3, "aTexCoord")
-        self.texCoord = GLuint(3)
-
-        #self.position = glGetAttribLocation(self.shader, "position")
-        #self.color = glGetAttribLocation(self.shader, "color")
-        #self.vertex_normal = glGetAttribLocation(self.shader, "vertex_normal")
-        #self.texCoord = glGetAttribLocation(self.shader, "aTexCoord")
-
-        self.texUnitUniform = glGetUniformLocation(self.shader, 'texUnit')
 
         # If necessary, translate shape location based on pos
         self.pos = pos
@@ -157,6 +109,111 @@ class Cube:
         ###
 
         return textureID
+
+    def correctShader(self):
+        # Vertex Shader
+        self.VERTEX_SHADER = shaders.compileShader("""#version 130
+                uniform mat4 invT;
+                attribute vec3 position;
+                attribute vec3 color;
+                attribute vec3 vertex_normal;
+                attribute vec2 aTexCoord;
+                out vec4 vertex_color;
+                out vec2 TexCoord;
+                void main()
+                {
+                    vec4 norm = invT * vec4(vertex_normal,0.0);
+                    gl_Position = gl_ModelViewProjectionMatrix * vec4(position,1.0);
+                    vertex_color = vec4(color * min(1, max(0, norm[2])), 1.0);
+                    TexCoord = aTexCoord;
+                }""", GL_VERTEX_SHADER)
+
+        # Fragment Shader
+        self.FRAGMENT_SHADER = shaders.compileShader("""#version 130 
+                precision highp float;
+
+                in vec4 vertex_color;
+                in vec2 TexCoord;
+                out vec4 fragColor;
+
+                uniform sampler2D texUnit; 
+
+                void main() {
+                    fragColor = texture(texUnit, TexCoord);
+                }""", GL_FRAGMENT_SHADER)
+
+        # Compile Shader
+        self.shader = shaders.compileProgram(self.VERTEX_SHADER, self.FRAGMENT_SHADER)
+
+        # Core OpenGL requires that at least one OpenGL vertex array be bound
+        VAO = glGenVertexArrays(1)
+        glBindVertexArray(VAO)
+
+        # The vbo thing does something
+        self.vbo = vbo.VBO(self.verts)  # <- this is where verts is processed
+
+        self.uniformInvT = glGetUniformLocation(self.shader, "invT")
+
+        glBindAttribLocation(self.shader, 0, "position")
+        self.position = GLuint(0)
+        glBindAttribLocation(self.shader, 1, "color")
+        self.color = GLuint(1)
+        glBindAttribLocation(self.shader, 2, "vertex_normal")
+        self.vertex_normal = GLuint(2)
+        glBindAttribLocation(self.shader, 3, "aTexCoord")
+        self.texCoord = GLuint(3)
+
+        self.texUnitUniform = glGetUniformLocation(self.shader, 'texUnit')
+
+    def incorrectShader(self):
+
+        # Vertex Shader
+        self.VERTEX_SHADER = shaders.compileShader("""#version 130
+                        uniform mat4 invT;
+                        attribute vec3 position;
+                        attribute vec3 color;
+                        attribute vec3 vertex_normal;
+                        
+                        out vec4 vertex_color;
+                       
+                        void main()
+                        {
+                            vec4 norm = invT * vec4(vertex_normal,0.0);
+                            gl_Position = gl_ModelViewProjectionMatrix * vec4(position,1.0);
+                            vertex_color = vec4(color * min(1, max(0, norm[2])), 1.0);
+                            
+                        }""", GL_VERTEX_SHADER)
+
+        # Fragment Shader
+        self.FRAGMENT_SHADER = shaders.compileShader("""#version 130 
+                        precision highp float;
+
+                        in vec4 vertex_color;
+                        
+                        out vec4 fragColor;
+
+                        uniform sampler2D texUnit; 
+
+                        void main() {
+                            fragColor = texture(texUnit, vec2(vertex_color));
+                        }""", GL_FRAGMENT_SHADER)
+
+        # Compile Shader
+        self.shader = shaders.compileProgram(self.VERTEX_SHADER, self.FRAGMENT_SHADER)
+
+        # Core OpenGL requires that at least one OpenGL vertex array be bound
+        VAO = glGenVertexArrays(1)
+        glBindVertexArray(VAO)
+
+        # The vbo thing does something
+        self.vbo = vbo.VBO(self.verts)  # <- this is where verts is processed
+
+        self.uniformInvT = glGetUniformLocation(self.shader, "invT")
+
+        self.position = glGetAttribLocation(self.shader, "position")
+        self.color = glGetAttribLocation(self.shader, "color")
+        self.vertex_normal = glGetAttribLocation(self.shader, "vertex_normal")
+        self.texCoord = glGetAttribLocation(self.shader, "aTexCoord")
 
     def Update(self, deltaTime, currentID):
         # TODO
@@ -216,7 +273,48 @@ class Cube:
             
 
         ###           
-    
+
+    def incorrectDrawBlock(self):
+        ## My Added Texture Code ##
+
+        glEnable(GL_TEXTURE_2D)
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, self.textureGen)
+
+        ##
+
+        ### This is the Professor's code used to render the block with shaders ###
+        shaders.glUseProgram(self.shader)
+        invT = np.linalg.inv(glGetDouble(GL_MODELVIEW_MATRIX)).transpose()
+        glUniformMatrix4fv(self.uniformInvT, 1, False, invT)
+        try:
+            self.vbo.bind()
+            try:
+                glEnableVertexAttribArray(self.position)
+                glEnableVertexAttribArray(self.color)
+                glEnableVertexAttribArray(self.vertex_normal)
+                #glEnableVertexAttribArray(self.texCoord)
+                stride = 44
+                glVertexAttribPointer(self.position, 3, GL_FLOAT, False, stride, self.vbo)
+                glVertexAttribPointer(self.color, 3, GL_FLOAT, False, stride, self.vbo + 12)
+                glVertexAttribPointer(self.vertex_normal, 3, GL_FLOAT, True, stride, self.vbo + 24)
+                #glVertexAttribPointer(self.texCoord, 2, GL_FLOAT, False, stride, self.vbo + 36)
+                glDrawArrays(GL_QUADS, 0, self.model_size)
+
+
+            finally:
+                self.vbo.unbind()
+                glDisableVertexAttribArray(self.position)
+                glDisableVertexAttribArray(self.color)
+                glDisableVertexAttribArray(self.vertex_normal)
+                #glDisableVertexAttribArray(self.texCoord)
+        finally:
+            shaders.glUseProgram(0)
+
+            glBindTexture(GL_TEXTURE_2D, 0)
+
+        ###
+
     def _delete(self):
         global blockList
 
@@ -228,7 +326,8 @@ class Cube:
 
         glRotatef(self.ang, *self.axis)
 
-        self.DrawBlock()
+        #self.DrawBlock()
+        self.incorrectDrawBlock()
 
         glLoadMatrixf(m)
 
