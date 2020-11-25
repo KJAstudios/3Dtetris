@@ -20,11 +20,10 @@ from OpenGL.GL import shaders
 
 
 class Cube:
-    def __init__(self, type=None, rotateSpeed=100.0, pos=(0, 0, 0)):
+    def __init__(self, type=None, rotateSpeed=100.0, pos=(0, 0, 10)):
         global shapeList
 
         # color of the shape
-        # TODO change this to texture wrapping
         self.color = np.asfarray([1, 1, 1])
         color = np.asfarray([1, 1, 1])
 
@@ -43,14 +42,12 @@ class Cube:
             self.model_size = len(model)
         else:
             print('Major Error! Shape type not recognized!')
-            # Would be good to enter code to delete 'self' if this occurs
-            return False
+            self._delete()
+            print('Removing Block...')
 
 
         # The array of shape properties
         self.verts = np.float32(model)
-
-        #### THE ERROR IS LIKELY IN THIS CODE BLOCK ####
 
         # Vertex Shader thing?
         self.VERTEX_SHADER = shaders.compileShader("""#version 130
@@ -58,12 +55,12 @@ class Cube:
         attribute vec3 position;
         attribute vec3 color;
         attribute vec3 vertex_normal;
-        vec2 aTexCoord;
+        attribute vec2 aTexCoord;
         out vec4 vertex_color;
         out vec2 TexCoord;
         void main()
         {
-            vec4 norm = invT * vec4(vertex_normal,1.0);
+            vec4 norm = invT * vec4(vertex_normal,0.0);
             gl_Position = gl_ModelViewProjectionMatrix * vec4(position,1.0);
             vertex_color = vec4(color * min(1, max(0, norm[2])), 1.0);
             TexCoord = aTexCoord;
@@ -71,6 +68,8 @@ class Cube:
 
         # Fragment Shader thing?
         self.FRAGMENT_SHADER = shaders.compileShader("""#version 130 
+        precision highp float;
+
         in vec4 vertex_color;
         in vec2 TexCoord;
         out vec4 fragColor;
@@ -80,8 +79,6 @@ class Cube:
         void main() {
             fragColor = texture(texUnit, TexCoord);
         }""", GL_FRAGMENT_SHADER)
-
-        ####
 
         # Compile Shader
         self.shader = shaders.compileProgram(self.VERTEX_SHADER, self.FRAGMENT_SHADER)
@@ -94,6 +91,7 @@ class Cube:
         self.vbo = vbo.VBO(self.verts)  # <- this is where verts is processed
 
         self.uniformInvT = glGetUniformLocation(self.shader, "invT")
+
         glBindAttribLocation(self.shader, 0, "position")
         self.position = GLuint(0)
         glBindAttribLocation(self.shader, 1, "color")
@@ -102,6 +100,11 @@ class Cube:
         self.vertex_normal = GLuint(2)
         glBindAttribLocation(self.shader, 3, "aTexCoord")
         self.texCoord = GLuint(3)
+
+        #self.position = glGetAttribLocation(self.shader, "position")
+        #self.color = glGetAttribLocation(self.shader, "color")
+        #self.vertex_normal = glGetAttribLocation(self.shader, "vertex_normal")
+        #self.texCoord = glGetAttribLocation(self.shader, "aTexCoord")
 
         self.texUnitUniform = glGetUniformLocation(self.shader, 'texUnit')
 
@@ -156,14 +159,26 @@ class Cube:
         return textureID
 
     def Update(self, deltaTime, currentID):
-        if self.id == currentID or currentID == -1:
+        # TODO
+        # If space below block is clear, move downwards one unit
+        
+        # if (space is clear):
+        #     (move down)
+        # else:
+        #     (indicate a new block must be summoned)      
+
+        pass
+        
+        # Blocks will not automatically rotate for now
+        #if self.id == currentID or currentID == -1:
             # Update Angle if self is a current Shape
-            self.ang += self.rotateSpeed * deltaTime
+            #self.ang += self.rotateSpeed * deltaTime
 
     def DrawBlock(self):
         ## My Added Texture Code ##
             
         glEnable(GL_TEXTURE_2D)
+        glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, self.textureGen)
 
         ##
@@ -200,7 +215,13 @@ class Cube:
             glBindTexture(GL_TEXTURE_2D, 0)
             
 
-        ###            
+        ###           
+    
+    def _delete(self):
+        global blockList
+
+        blockList.remove(self)
+        del self
 
     def Render(self):
         m = glGetDouble(GL_MODELVIEW_MATRIX)

@@ -47,4 +47,4 @@ def LoadOBJ(path, color):
     return vbo
 
 
-print(LoadOBJ("resources/models/box_tetris_piece.obj", [0, 0, 1]))
+#print(LoadOBJ("resources/models/box_tetris_piece.obj", [0, 0, 1]))

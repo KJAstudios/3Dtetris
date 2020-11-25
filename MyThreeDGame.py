@@ -6,7 +6,15 @@ from Cube import Cube
 # Main Init
 pygame.init()
 size = width, height = 640, 480
+
+pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
+pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 3)
+pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_COMPATIBILITY)
+
 screen = pygame.display.set_mode(size, DOUBLEBUF | OPENGL)
+
+pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
+pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 3)
 
 glMatrixMode(GL_PROJECTION)
 gluPerspective(45, (width / height), 0.1, 50.0)
@@ -75,16 +83,21 @@ def Render(screen):
     rtext = 'hello world'
     text.Render(screen, rtext, 20, 50, 1, color)
 
-    instructions = 'Press num keys to switch blocks'
-    text.Render(screen, instructions, 10, 620, 0.5, color)
+    #instructions = 'Press num keys to switch blocks'
+    #text.Render(screen, instructions, 10, 620, 0.5, color)
 
     pygame.display.flip()
 
 
 _gTickLastFrame = pygame.time.get_ticks()
 _gDeltaTime = 0.0
+timer = 0
 while Update(_gDeltaTime):
     Render(screen)
     t = pygame.time.get_ticks()
     _gDeltaTime = (t - _gTickLastFrame) / 1000.0
     _gTickLastFrame = t
+    timer += 1
+    #if timer > 50:
+    #    blockList[1]._delete()
+    #    timer = 0
