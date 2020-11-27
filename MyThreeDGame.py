@@ -28,11 +28,13 @@ glRotate(-15, 0, 1, 0)
 glRotate(-7, 0, 0, 1)
 glRotate(-35, 1, 0, 0)
 
-blockList.append(Cube(type="box", pos=[-5, 6, 10]))
-blockList.append(Cube(type="T", rotateSpeed=-150.0, pos=[0, 6, 10]))
-blockList.append(Cube(type="S", rotateSpeed=175.0, pos=[5, 6, 10]))
+blockList.append(Cube(type="box", pos=[-5, 0, 10]))
+blockList.append(Cube(type="T", rotateSpeed=-150.0, pos=[-5, 0, 10]))
+blockList.append(Cube(type="S", rotateSpeed=175.0, pos=[-5, 0, 10]))
 blockList.append(Cube(type="straight", rotateSpeed=125.0, pos=[-5, 0, 10]))
-blockList.append(Cube(type="L", rotateSpeed=-125.0, pos=[0, 0, 10]))
+blockList.append(Cube(type="L", rotateSpeed=-125.0, pos=[-5, 0, 10]))
+
+
 
 # import UI
 from UI.UIText import UIText
@@ -107,6 +109,7 @@ while Update(_gDeltaTime):
     timer += 1
 
     if timer > 55:
-        blockList[0].pos[2] += 1
+        if blockList[0].pos[2] != 0:
+            blockList[0].pos[2] += -1
         timer = 0
 

@@ -53,7 +53,7 @@ class Cube:
         # RIGHT HERE IS WHERE SHADER CODE IS CHANGED          #
         # IN CASE SHADER/TEXTURE IMPLEMENTATION DIDN'T WORK,  #
         # SWITCH correctShader() TO incorrectShader() AND     #
-        # SWITCH DrawBlock() to incorrectDrawBlock in Render()#
+        # SWITCH DrawBlock() TO incorrectDrawBlock IN Render()#
         #######################################################
 
         #self.correctShader()
@@ -64,21 +64,27 @@ class Cube:
         # If necessary, translate shape location based on pos
         self.pos = pos.copy()
         self.previousPos = pos.copy()
+
         if self.pos != [0, 0, 10]:
-            for i in self.verts:
-                i[0] += self.pos[0]
-                i[1] += self.pos[1]
-                i[2] += self.pos[2]
+            for j in self.verts:
+                for i in range(0, len(j)):
+                    if i % 12 == 0:
+                        j[i] += self.pos[0]
+                    elif i % 12 == 1:
+                        j[i] += self.pos[1]
+                    elif i % 12 == 2:
+                        j[i] += self.pos[2]
         else:
-            for i in self.verts:
-                i[2] += 10
+            for j in self.verts:
+                for i in range(0, len(j)):
+                    if i % 12 == 2:
+                        j[i] += 10
 
         # Starting Angle
         self.ang = 0
 
         # Insert block into array
         blocks = shapeCornerDict[self.type]
-
 
         # Get speed of rotation
         self.rotateSpeed = rotateSpeed
@@ -237,16 +243,24 @@ class Cube:
         #     (indicate a new block must be summoned)
 
         if self.pos != self.previousPos:
+            # if self.id == 1:
+            #     print(f'Previous position {self.previousPos}')
+            #     print(f'Current position {self.pos}')
+            print(self.verts)
 
-            if self.id == 1:
-                print(f'Previous position {self.previousPos}')
-                print(f'Current position {self.pos}')
-            for i in self.verts:
-                i[0] += self.pos[0]
-                i[1] += self.pos[1]
-                i[2] += self.pos[2]
+            for j in self.verts:
+                for i in range(0, len(j)):
+                    if i % 12 == 0:
+                        j[i] += self.pos[0] - self.previousPos[0]
+                    elif i % 12 == 1:
+                        j[i] += self.pos[1] - self.previousPos[1]
+                    elif i % 12 == 2:
+                        j[i] += self.pos[2] - self.previousPos[2]
 
             self.previousPos = self.pos.copy()
+
+            # The vbo thing does something
+            self.vbo = vbo.VBO(self.verts)  # <- this is where verts is processed
 
         # Blocks will not automatically rotate for now
         #if self.id == currentID or currentID == -1:
@@ -289,7 +303,7 @@ class Cube:
                 glDisableVertexAttribArray(self.texCoord)
         finally:
             shaders.glUseProgram(0)
-            
+
            
             glBindTexture(GL_TEXTURE_2D, 0)
             
