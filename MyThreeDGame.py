@@ -28,11 +28,16 @@ glRotate(-15, 0, 1, 0)
 glRotate(-7, 0, 0, 1)
 glRotate(-35, 1, 0, 0)
 
-blockList.append(Cube(type="box", pos=[0, 0, 9]))
-blockList.append(Cube(type="T", rotateSpeed=-150.0, pos=[5, 5, 9]))
-#blockList.append(Cube(type="S", rotateSpeed=175.0, pos=[-5, 0, 9]))
-#blockList.append(Cube(type="straight", rotateSpeed=125.0, pos=[-5, 0, 9]))
-#blockList.append(Cube(type="L", rotateSpeed=-125.0, pos=[-5, 0, 9]))
+
+def AddBlockToGame(type, pos, rotateSpeed = 100):
+    blockList.append(Cube(type, rotateSpeed, pos))
+
+
+AddBlockToGame(type="box", pos=[0, 0, 9])
+AddBlockToGame(type="T", rotateSpeed=-150.0, pos=[5, 5, 9])
+AddBlockToGame(type="S", rotateSpeed=175.0, pos=[-5, 0, 9])
+AddBlockToGame(type="straight", rotateSpeed=125.0, pos=[-5, 0, 9])
+AddBlockToGame(type="L", rotateSpeed=-125.0, pos=[-5, 0, 9])
 
 
 
@@ -72,6 +77,12 @@ def Update(deltaTime):
         # id can be used to determine if a block should be able to be rotated
         block.Update(deltaTime, currentShapeID)
 
+        if id == 0:
+            block.newAlpha -= deltaTime
+
+        if block.newAlpha <= 0:
+            block._delete()
+
 
 
     # UI.Update(deltaTime)
@@ -107,7 +118,8 @@ while Update(_gDeltaTime):
     _gDeltaTime = (t - _gTickLastFrame) / 1000.0
     _gTickLastFrame = t
     timer += 1
-    #print(gameGrid)
+
+
 
     if timer > 55:
         # if blockList[0].pos[2] != 0:

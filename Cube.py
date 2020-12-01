@@ -88,7 +88,7 @@ class Cube:
         # Get speed of rotation
         self.rotateSpeed = rotateSpeed
         # Axis of rotation (0,0,0) + self.pos
-        self.axis = (0, 0, 10)
+        self.axis = (0, 0, 0)
 
         self.textureGen = self.load_texture()
 
@@ -108,6 +108,8 @@ class Cube:
         self.insertToGrid()
         print('After')
         print(gameGrid)
+
+        self.newAlpha = 1.0
 
     def insertToGrid(self):
         for i in self.parts:
@@ -152,6 +154,7 @@ class Cube:
         # Vertex Shader
         self.VERTEX_SHADER = shaders.compileShader("""#version 130
                 uniform mat4 invT;
+                uniform float alpha;
                 attribute vec3 position;
                 attribute vec3 color;
                 attribute vec3 vertex_normal;
@@ -177,6 +180,7 @@ class Cube:
                 uniform sampler2D texUnit; 
 
                 void main() {
+                    fragColor.a = alpha;
                     fragColor = texture(texUnit, TexCoord);
                 }""", GL_FRAGMENT_SHADER)
 
@@ -208,14 +212,17 @@ class Cube:
         # Vertex Shader
         self.VERTEX_SHADER = shaders.compileShader("""#version 130
                         uniform mat4 invT;
+                        uniform float alpha;
                         attribute vec3 position;
                         attribute vec3 color;
                         attribute vec3 vertex_normal;
                         
                         out vec4 vertex_color;
+                        out float alpha_out;
                        
                         void main()
                         {
+                            alpha_out = alpha;
                             vec4 norm = invT * vec4(vertex_normal,0.0);
                             gl_Position = gl_ModelViewProjectionMatrix * vec4(position,1.0);
                             vertex_color = vec4(color * min(1, max(0, norm[2])), 1.0);
@@ -227,13 +234,15 @@ class Cube:
                         precision highp float;
 
                         in vec4 vertex_color;
+                        in float alpha_out;
                         
                         out vec4 fragColor;
 
                         uniform sampler2D texUnit; 
 
-                        void main() {
+                        void main() {                            
                             fragColor = texture(texUnit, vec2(vertex_color));
+                            fragColor.a = alpha_out;
                         }""", GL_FRAGMENT_SHADER)
 
         # Compile Shader
@@ -250,6 +259,7 @@ class Cube:
 
         self.position = glGetAttribLocation(self.shader, "position")
         self.color = glGetAttribLocation(self.shader, "color")
+        self.alpha = glGetUniformLocation(self.shader, "alpha")
         self.vertex_normal = glGetAttribLocation(self.shader, "vertex_normal")
         self.texCoord = glGetAttribLocation(self.shader, "aTexCoord")
 
@@ -299,6 +309,7 @@ class Cube:
         shaders.glUseProgram(self.shader)
         invT = np.linalg.inv(glGetDouble(GL_MODELVIEW_MATRIX)).transpose()
         glUniformMatrix4fv(self.uniformInvT, 1, False, invT)
+        glUniform1f(self.alpha, 0.0)
         try:
             self.vbo.bind()
             try:
@@ -342,6 +353,7 @@ class Cube:
         shaders.glUseProgram(self.shader)
         invT = np.linalg.inv(glGetDouble(GL_MODELVIEW_MATRIX)).transpose()
         glUniformMatrix4fv(self.uniformInvT, 1, False, invT)
+        glUniform1f(self.alpha, self.newAlpha)
         try:
             self.vbo.bind()
             try:
