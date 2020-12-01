@@ -42,9 +42,10 @@ blockID = [1]
 newBlock = [0]
 
 ### Game Grid
-# 3D numpy array 8 x 8 x 10, zero means empty, other numbers refer to block id
+# 3D numpy array 10 x 8 x 8, zero means empty, other numbers refer to block id
+#            height x row x column
 
-gameGrid = np.zeros((8, 8, 10))
+gameGrid = np.zeros((10, 8, 8))
 
 # Example:
 # gameGrid = [[[0,0,0,0,0,0,0,2],

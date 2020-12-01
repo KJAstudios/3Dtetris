@@ -18,7 +18,7 @@ from OpenGL.GL import shaders
 # 
 
 class Cube:
-    def __init__(self, type=None, rotateSpeed=100.0, pos=[0, 0, 10]):
+    def __init__(self, type=None, rotateSpeed=100.0, pos=[0, 0, 9]):
         global shapeList
         global gameGrid
         global shapeCornerDict
@@ -80,18 +80,38 @@ class Cube:
                     if i % 12 == 2:
                         j[i] += 10
 
-        # Starting Angle
         self.ang = 0
 
-        # Insert block into array
-        blocks = shapeCornerDict[self.type]
+
+
 
         # Get speed of rotation
         self.rotateSpeed = rotateSpeed
         # Axis of rotation (0,0,0) + self.pos
-        self.axis = (self.pos[0], self.pos[1], self.pos[2])
+        self.axis = (0, 0, 10)
 
         self.textureGen = self.load_texture()
+
+        ### Set Starting Angle
+        if self.type == 'box':
+            self.ang = 0
+        elif self.type == 'T':
+            self.ang = 0
+
+        ### Insert block into array
+        # Get positions relative to center
+        self.parts = shapeCornerDict[self.type]
+
+        # Use the position as 'center'
+        print('Before')
+        print(gameGrid)
+        self.insertToGrid()
+        print('After')
+        print(gameGrid)
+
+    def insertToGrid(self):
+        for i in self.parts:
+            gameGrid[self.pos[2] + i[2]][self.pos[1] + i[1]][self.pos[0] + i[0]] = self.id
 
     def load_texture(self):
         # Load texture image
@@ -246,7 +266,6 @@ class Cube:
             # if self.id == 1:
             #     print(f'Previous position {self.previousPos}')
             #     print(f'Current position {self.pos}')
-            print(self.verts)
 
             for j in self.verts:
                 for i in range(0, len(j)):
