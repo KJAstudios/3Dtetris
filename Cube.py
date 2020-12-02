@@ -63,6 +63,15 @@ class Cube:
 
         # If necessary, translate shape location based on pos
         self.pos = pos.copy()
+
+        # If a position is out of range make it in range
+        # if self.pos[0] >= 4 or self.pos[0] < 0:
+        #     self.pos[0] = 1
+        # if self.pos[1] >= 4 or self.pos[1] < 0:
+        #     self.pos[1] = 1
+        # if self.pos[2] >= 10 or self.pos[2] < 0:
+        #     self.pos[2] = 1
+
         self.previousPos = pos.copy()
 
         if self.pos != [0, 0, 10]:
@@ -109,11 +118,24 @@ class Cube:
         print('After')
         print(gameGrid)
 
-        self.newAlpha = 1.0
+        self.newAlpha = 0.0
+
+        self.moveTimer = 0
+
+        self.fadeIn = False
+        self.fadeOut = False
 
     def insertToGrid(self):
         for i in self.parts:
             gameGrid[self.pos[2] + i[2]][self.pos[1] + i[1]][self.pos[0] + i[0]] = self.id
+
+    def moveDown(self, deltaTime):
+        # TODO : Check gameGrid before moving blocks
+
+        if self.pos[2] > 0:
+            self.pos[2] -= 1
+        if self.pos[2] < 0:
+            self.pos[2] = 0
 
     def load_texture(self):
         # Load texture image
@@ -264,37 +286,55 @@ class Cube:
         self.texCoord = glGetAttribLocation(self.shader, "aTexCoord")
 
     def Update(self, deltaTime, currentID):
-        # TODO
-        # If space below block is clear, move downwards one unit
-        
-        # if (space is clear):
-        #     (move down)
-        # else:
-        #     (indicate a new block must be summoned)
+        global gameState
 
-        if self.pos != self.previousPos:
-            # if self.id == 1:
-            #     print(f'Previous position {self.previousPos}')
-            #     print(f'Current position {self.pos}')
+        self.moveTimer += deltaTime
 
-            for j in self.verts:
-                for i in range(0, len(j)):
-                    if i % 12 == 0:
-                        j[i] += self.pos[0] - self.previousPos[0]
-                    elif i % 12 == 1:
-                        j[i] += self.pos[1] - self.previousPos[1]
-                    elif i % 12 == 2:
-                        j[i] += self.pos[2] - self.previousPos[2]
+        if self.fadeIn:
+            self.newAlpha += deltaTime
+            if self.newAlpha >= 1.0:
+                self.fadeIn = False
+                self.newAlpha = 1.0
 
-            self.previousPos = self.pos.copy()
+        elif self.fadeOut:
+            self.newAlpha -= deltaTime
+            if self.newAlpha <= 0.0:
+                self.fadeOut = False
+                self.newAlpha = 0.0
 
-            # The vbo thing does something
-            self.vbo = vbo.VBO(self.verts)  # <- this is where verts is processed
+                if gameState[0] == 0:
+                    self._delete()
+        else:
+            if self.moveTimer >= 1.0:
+                self.moveDown(deltaTime)
+                self.moveTimer = 0
 
-        # Blocks will not automatically rotate for now
-        #if self.id == currentID or currentID == -1:
-            # Update Angle if self is a current Shape
-            #self.ang += self.rotateSpeed * deltaTime
+            if self.pos != self.previousPos:
+                # if self.id == 1:
+                #     print(f'Previous position {self.previousPos}')
+                #     print(f'Current position {self.pos}')
+
+                for j in self.verts:
+                    for i in range(0, len(j)):
+                        if i % 12 == 0:
+                            j[i] += self.pos[0] - self.previousPos[0]
+                        elif i % 12 == 1:
+                            j[i] += self.pos[1] - self.previousPos[1]
+                        elif i % 12 == 2:
+                            j[i] += self.pos[2] - self.previousPos[2]
+
+                self.previousPos = self.pos.copy()
+
+                # The vbo thing does something
+                self.vbo = vbo.VBO(self.verts)  # <- this is where verts is processed
+
+            if self.pos[2] == 0:
+                self.fadeOut = True
+
+            # Blocks will not automatically rotate for now
+            #if self.id == currentID or currentID == -1:
+                # Update Angle if self is a current Shape
+                #self.ang += self.rotateSpeed * deltaTime
 
     def DrawBlock(self):
         ## My Added Texture Code ##

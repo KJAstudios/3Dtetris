@@ -31,13 +31,14 @@ glRotate(-35, 1, 0, 0)
 
 def AddBlockToGame(type, pos, rotateSpeed = 100):
     blockList.append(Cube(type, rotateSpeed, pos))
+    blockList[-1].fadeIn = True
 
 
 AddBlockToGame(type="box", pos=[0, 0, 9])
-AddBlockToGame(type="T", rotateSpeed=-150.0, pos=[5, 5, 9])
-AddBlockToGame(type="S", rotateSpeed=175.0, pos=[-5, 0, 9])
-AddBlockToGame(type="straight", rotateSpeed=125.0, pos=[-5, 0, 9])
-AddBlockToGame(type="L", rotateSpeed=-125.0, pos=[-5, 0, 9])
+AddBlockToGame(type="T", rotateSpeed=-150.0, pos=[1, 1, 9])
+AddBlockToGame(type="S", rotateSpeed=175.0, pos=[-2, 0, 9])
+AddBlockToGame(type="straight", rotateSpeed=125.0, pos=[-2, 2, 9])
+AddBlockToGame(type="L", rotateSpeed=-125.0, pos=[0, 2, 9])
 
 
 
@@ -51,6 +52,12 @@ currentShapeID = -1
 
 def Update(deltaTime):
     global currentShapeID
+    global gameState
+
+    # If the game is paused,
+    if gameState[0] == 1:
+        for block in blockList:
+            block.fadeOut = True
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -77,11 +84,11 @@ def Update(deltaTime):
         # id can be used to determine if a block should be able to be rotated
         block.Update(deltaTime, currentShapeID)
 
-        if id == 0:
-            block.newAlpha -= deltaTime
+        #if id == 0:
+        #    block.newAlpha -= deltaTime
 
-        if block.newAlpha <= 0:
-            block._delete()
+        #if block.newAlpha <= 0:
+        #    block._delete()
 
 
 
