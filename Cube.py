@@ -181,10 +181,12 @@ class Cube:
                 attribute vec3 color;
                 attribute vec3 vertex_normal;
                 attribute vec2 aTexCoord;
+                out float alpha_out;
                 out vec4 vertex_color;
                 out vec2 TexCoord;
                 void main()
                 {
+                    alpha_out = alpha;
                     vec4 norm = invT * vec4(vertex_normal,0.0);
                     gl_Position = gl_ModelViewProjectionMatrix * vec4(position,1.0);
                     vertex_color = vec4(color * min(1, max(0, norm[2])), 1.0);
@@ -197,13 +199,15 @@ class Cube:
 
                 in vec4 vertex_color;
                 in vec2 TexCoord;
-                out vec4 fragColor;
-
+                in float alpha_out;
+                
+                out vec4 fragColor;                
+                
                 uniform sampler2D texUnit; 
 
                 void main() {
-                    fragColor.a = alpha;
                     fragColor = texture(texUnit, TexCoord);
+                    fragColor.a = alpha_out;
                 }""", GL_FRAGMENT_SHADER)
 
         # Compile Shader
@@ -217,6 +221,7 @@ class Cube:
         self.vbo = vbo.VBO(self.verts)  # <- this is where verts is processed
 
         self.uniformInvT = glGetUniformLocation(self.shader, "invT")
+        self.alpha = glGetUniformLocation(self.shader, "alpha")
 
         glBindAttribLocation(self.shader, 0, "position")
         self.position = GLuint(0)
@@ -349,7 +354,7 @@ class Cube:
         shaders.glUseProgram(self.shader)
         invT = np.linalg.inv(glGetDouble(GL_MODELVIEW_MATRIX)).transpose()
         glUniformMatrix4fv(self.uniformInvT, 1, False, invT)
-        glUniform1f(self.alpha, 0.0)
+        glUniform1f(self.alpha, self.newAlpha)
         try:
             self.vbo.bind()
             try:

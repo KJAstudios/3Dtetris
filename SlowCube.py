@@ -41,7 +41,6 @@ class SlowCube:
                 i[2] += self.pos[2]
 
         # color of the shape
-        # TODO change this to texture wrapping
         self.color = np.asfarray([0, 0, 1])
 
         # Starting Angle
