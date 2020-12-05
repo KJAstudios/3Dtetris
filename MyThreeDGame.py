@@ -34,10 +34,10 @@ def AddBlockToGame(type, pos, rotateSpeed = 100):
     blockList[-1].fadeIn = True
 
 
-AddBlockToGame(type="box", pos=[0, 0, 9])
-AddBlockToGame(type="T", rotateSpeed=-150.0, pos=[1, 1, 9])
-AddBlockToGame(type="S", rotateSpeed=175.0, pos=[-2, 0, 9])
-AddBlockToGame(type="straight", rotateSpeed=125.0, pos=[-2, 2, 9])
+#AddBlockToGame(type="box", pos=[0, 0, 9])
+#AddBlockToGame(type="T", rotateSpeed=-150.0, pos=[1, 1, 9])
+#AddBlockToGame(type="S", rotateSpeed=175.0, pos=[-2, 0, 9])
+#AddBlockToGame(type="straight", rotateSpeed=125.0, pos=[-2, 2, 9])
 AddBlockToGame(type="L", rotateSpeed=-125.0, pos=[0, 2, 9])
 
 
@@ -77,8 +77,10 @@ def Update(deltaTime):
                 currentShapeID = 5
             elif event.key == pygame.K_7:
                 currentShapeID = -1
+        for cube in blockList:
+            cube.ProcessEvent(event)
         #if UI.ProcessEvent(event) == True:
-            continue
+        #    continue
 
     for id, block in enumerate(blockList):
         # id can be used to determine if a block should be able to be rotated

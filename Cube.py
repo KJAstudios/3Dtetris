@@ -1,4 +1,3 @@
-
 import pygame
 import numpy as np
 import math
@@ -10,6 +9,7 @@ _lightVector = np.asfarray([0, 0, 1])  # <- Unused _lightvector
 
 from OpenGL.arrays import vbo
 from OpenGL.GL import shaders
+
 
 ### Notes
 # Cube() is the class of each cube used in the game.
@@ -45,7 +45,6 @@ class Cube:
             self._delete()
             print('Removing Block...')
 
-
         # The array of shape properties
         self.verts = np.float32(model)
 
@@ -56,8 +55,8 @@ class Cube:
         # SWITCH DrawBlock() TO incorrectDrawBlock IN Render()#
         #######################################################
 
-        #self.correctShader()
-        self.incorrectShader()
+        self.correctShader()
+        # self.incorrectShader()
 
         #######################################################
 
@@ -90,9 +89,6 @@ class Cube:
                         j[i] += 10
 
         self.ang = 0
-
-
-
 
         # Get speed of rotation
         self.rotateSpeed = rotateSpeed
@@ -156,7 +152,7 @@ class Cube:
         ###############################
 
         # This is the texture code that initializes the textures.
-        
+
         textureID = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, textureID)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
@@ -165,7 +161,8 @@ class Cube:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
         # glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.textureSurf.width, self.textureSurf.height, 0, GL_RGB, GL_UNSIGNED_BYTE, self.textureData)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.textureSurf.width, self.textureSurf.height, 0, GL_RGB,
+                     GL_UNSIGNED_BYTE, self.textureData)
         glBindTexture(GL_TEXTURE_2D, 0)
 
         ################################
@@ -290,6 +287,43 @@ class Cube:
         self.vertex_normal = glGetAttribLocation(self.shader, "vertex_normal")
         self.texCoord = glGetAttribLocation(self.shader, "aTexCoord")
 
+        # put rotating logic here
+
+    def ProcessEvent(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_a:
+                for j in self.verts:
+                    for i in range(0, len(j)):
+                        if i % 12 == 0:
+                            x = j[i]
+                            y = j[i+1]
+                            j[i] = -y
+                            j[i+1] = x
+            elif event.key == pygame.K_d:
+                for j in self.verts:
+                    for i in range(0, len(j)):
+                        if i % 12 == 0:
+                            x = j[i]
+                            y = j[i+1]
+                            j[i] = y
+                            j[i+1] = -x
+            elif event.key == pygame.K_w:
+                for j in self.verts:
+                    for i in range(0, len(j)):
+                        if i % 12 == 0:
+                            x = j[i]
+                            z = j[i+2]
+                            j[i] = -z
+                            j[i+1] = x
+            elif event.key == pygame.K_s:
+                for j in self.verts:
+                    for i in range(0, len(j)):
+                        if i % 12 == 0:
+                            x = j[i]
+                            z = j[i+2]
+                            j[i] = z
+                            j[i+1] = -x
+
     def Update(self, deltaTime, currentID):
         global gameState
 
@@ -310,7 +344,7 @@ class Cube:
                 if gameState[0] == 0:
                     self._delete()
         else:
-            if self.moveTimer >= 1.0:
+            if self.moveTimer >= 0.5:
                 self.moveDown(deltaTime)
                 self.moveTimer = 0
 
@@ -337,13 +371,13 @@ class Cube:
                 self.fadeOut = True
 
             # Blocks will not automatically rotate for now
-            #if self.id == currentID or currentID == -1:
-                # Update Angle if self is a current Shape
-                #self.ang += self.rotateSpeed * deltaTime
+            # if self.id == currentID or currentID == -1:
+            # Update Angle if self is a current Shape
+            # self.ang += self.rotateSpeed * deltaTime
 
     def DrawBlock(self):
         ## My Added Texture Code ##
-            
+
         glEnable(GL_TEXTURE_2D)
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, self.textureGen)
@@ -368,8 +402,8 @@ class Cube:
                 glVertexAttribPointer(self.vertex_normal, 3, GL_FLOAT, True, stride, self.vbo + 24)
                 glVertexAttribPointer(self.texCoord, 2, GL_FLOAT, False, stride, self.vbo + 36)
                 glDrawArrays(GL_QUADS, 0, self.model_size)
-                
-                
+
+
             finally:
                 self.vbo.unbind()
                 glDisableVertexAttribArray(self.position)
@@ -379,9 +413,7 @@ class Cube:
         finally:
             shaders.glUseProgram(0)
 
-           
             glBindTexture(GL_TEXTURE_2D, 0)
-            
 
         ###           
 
@@ -405,12 +437,12 @@ class Cube:
                 glEnableVertexAttribArray(self.position)
                 glEnableVertexAttribArray(self.color)
                 glEnableVertexAttribArray(self.vertex_normal)
-                #glEnableVertexAttribArray(self.texCoord)
+                # glEnableVertexAttribArray(self.texCoord)
                 stride = 44
                 glVertexAttribPointer(self.position, 3, GL_FLOAT, False, stride, self.vbo)
                 glVertexAttribPointer(self.color, 3, GL_FLOAT, False, stride, self.vbo + 12)
                 glVertexAttribPointer(self.vertex_normal, 3, GL_FLOAT, True, stride, self.vbo + 24)
-                #glVertexAttribPointer(self.texCoord, 2, GL_FLOAT, False, stride, self.vbo + 36)
+                # glVertexAttribPointer(self.texCoord, 2, GL_FLOAT, False, stride, self.vbo + 36)
                 glDrawArrays(GL_QUADS, 0, self.model_size)
 
 
@@ -419,7 +451,7 @@ class Cube:
                 glDisableVertexAttribArray(self.position)
                 glDisableVertexAttribArray(self.color)
                 glDisableVertexAttribArray(self.vertex_normal)
-                #glDisableVertexAttribArray(self.texCoord)
+                # glDisableVertexAttribArray(self.texCoord)
         finally:
             shaders.glUseProgram(0)
 
@@ -436,10 +468,10 @@ class Cube:
     def Render(self):
         m = glGetDouble(GL_MODELVIEW_MATRIX)
 
-        glRotatef(self.ang, *self.axis)
+        # glRotatef(self.ang, *self.axis)
 
-        #self.DrawBlock()
-        self.incorrectDrawBlock()
+        self.DrawBlock()
+        # self.incorrectDrawBlock()
 
         glLoadMatrixf(m)
 
@@ -448,66 +480,64 @@ class Cube:
     # In this code, textures did work. Now they do not.      #
     ##########################################################
 
- #   def OldDrawBlock(self):
+#   def OldDrawBlock(self):
 
-        #####################################
-        ##        Old Drawing Code         ##
-        #####################################
+#####################################
+##        Old Drawing Code         ##
+#####################################
 
 #        global _lightVector
 
-        # glEnable(GL_TEXTURE_3D)
-        # texture = self.LoadTexture()
-        # glBindTexture(GL_TEXTURE_2D, texture)
-        # glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
+# glEnable(GL_TEXTURE_3D)
+# texture = self.LoadTexture()
+# glBindTexture(GL_TEXTURE_2D, texture)
+# glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
 
-        # invT = np.linalg.inv(glGetDouble(GL_MODELVIEW_MATRIX)).transpose()
-        # glBegin(GL_QUADS)
-        # for n, surface in enumerate(self.surfaces):
-        #    for vert in surface:
-        #        norm = np.append(self.normals[vert[1]], 1)
-        #        modelNorm = np.matmul(norm, invT)
-        #        modelNorm = np.delete(modelNorm, 3)
-        #        np.linalg.norm(modelNorm)
+# invT = np.linalg.inv(glGetDouble(GL_MODELVIEW_MATRIX)).transpose()
+# glBegin(GL_QUADS)
+# for n, surface in enumerate(self.surfaces):
+#    for vert in surface:
+#        norm = np.append(self.normals[vert[1]], 1)
+#        modelNorm = np.matmul(norm, invT)
+#        modelNorm = np.delete(modelNorm, 3)
+#        np.linalg.norm(modelNorm)
 
-        #        #if texture == None:
-        #        dotP = np.dot(_lightVector, modelNorm)
-        #        mult = max(min(dotP, 1), 0)
-        #        glColor3fv(self.color * mult)
+#        #if texture == None:
+#        dotP = np.dot(_lightVector, modelNorm)
+#        mult = max(min(dotP, 1), 0)
+#        glColor3fv(self.color * mult)
 
-        #        glVertex3fv(self.vertsTemp[vert[0]])
-        # glEnd()
+#        glVertex3fv(self.vertsTemp[vert[0]])
+# glEnd()
 
-        ####################################
+####################################
 
-    #def LoadTexture(self):
-    #    # Load texture image
-    #    try:
-    #        textureSurf = pygame.image.load(f"resources/textures/{self.type}_tetris_texture.png")
-    #    except:
-    #        print('Error Loading Texture! Reverting to default color.')
-    #        return None
+# def LoadTexture(self):
+#    # Load texture image
+#    try:
+#        textureSurf = pygame.image.load(f"resources/textures/{self.type}_tetris_texture.png")
+#    except:
+#        print('Error Loading Texture! Reverting to default color.')
+#        return None
 
-    #    # Convert it to text
-    #    textureText = pygame.image.tostring(textureSurf, "RGBA", 1)
+#    # Convert it to text
+#    textureText = pygame.image.tostring(textureSurf, "RGBA", 1)
 
-    #    # Texture width and height
-    #    width = textureSurf.get_width()
-    #    height = textureSurf.get_height()
-    #    # Do all the crazy gl stuff
-    #    glEnable(GL_TEXTURE_2D)
-    #    textureID = glGenTextures(1)
-    #    glBindTexture(GL_TEXTURE_2D, textureID)
-    #    # glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-    #    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-    #    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
-    #    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-    #    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-    #    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-    #    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-    #    # glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
-    #    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureText)
+#    # Texture width and height
+#    width = textureSurf.get_width()
+#    height = textureSurf.get_height()
+#    # Do all the crazy gl stuff
+#    glEnable(GL_TEXTURE_2D)
+#    textureID = glGenTextures(1)
+#    glBindTexture(GL_TEXTURE_2D, textureID)
+#    # glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+#    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+#    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+#    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+#    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+#    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+#    # glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+#    # glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+#    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureText)
 
-    #    return textureID
-
-
+#    return textureID
