@@ -56,7 +56,7 @@ class Cube:
         #######################################################
 
         self.correctShader()
-        # self.incorrectShader()
+        #self.incorrectShader()
 
         #######################################################
 
@@ -292,37 +292,41 @@ class Cube:
     def ProcessEvent(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_a:
-                for j in self.verts:
-                    for i in range(0, len(j)):
-                        if i % 12 == 0:
-                            x = j[i]
-                            y = j[i+1]
-                            j[i] = -y
-                            j[i+1] = x
+                if not self.fadeOut and not self.fadeIn:
+                    for j in self.verts:
+                        for i in range(0, len(j)):
+                            if i % 12 == 0:
+                                x = j[i]
+                                y = j[i+1]
+                                j[i] = -y
+                                j[i+1] = x
             elif event.key == pygame.K_d:
-                for j in self.verts:
-                    for i in range(0, len(j)):
-                        if i % 12 == 0:
-                            x = j[i]
-                            y = j[i+1]
-                            j[i] = y
-                            j[i+1] = -x
+                if not self.fadeOut and not self.fadeIn:
+                    for j in self.verts:
+                        for i in range(0, len(j)):
+                            if i % 12 == 0:
+                                x = j[i]
+                                y = j[i+1]
+                                j[i] = y
+                                j[i+1] = -x
             elif event.key == pygame.K_w:
-                for j in self.verts:
-                    for i in range(0, len(j)):
-                        if i % 12 == 0:
-                            x = j[i]
-                            z = j[i+2]
-                            j[i] = -z
-                            j[i+1] = x
+                if not self.fadeOut and not self.fadeIn:
+                    for j in self.verts:
+                        for i in range(0, len(j)):
+                            if i % 12 == 0:
+                                x = j[i]
+                                z = j[i+2]
+                                j[i] = -z
+                                j[i+1] = x
             elif event.key == pygame.K_s:
-                for j in self.verts:
-                    for i in range(0, len(j)):
-                        if i % 12 == 0:
-                            x = j[i]
-                            z = j[i+2]
-                            j[i] = z
-                            j[i+1] = -x
+                if not self.fadeOut and not self.fadeIn:
+                    for j in self.verts:
+                        for i in range(0, len(j)):
+                            if i % 12 == 0:
+                                x = j[i]
+                                z = j[i+2]
+                                j[i] = z
+                                j[i+1] = -x
 
     def Update(self, deltaTime, currentID):
         global gameState
@@ -471,7 +475,7 @@ class Cube:
         # glRotatef(self.ang, *self.axis)
 
         self.DrawBlock()
-        # self.incorrectDrawBlock()
+        #self.incorrectDrawBlock()
 
         glLoadMatrixf(m)
 
