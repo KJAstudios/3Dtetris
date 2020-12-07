@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 from gamecommon import *
 from Cube import Cube
+import Border
 
 # Main Init
 pygame.init()
@@ -23,10 +24,10 @@ glMatrixMode(GL_MODELVIEW)
 glEnable(GL_DEPTH_TEST)
 glDepthFunc(GL_LESS)
 
-glTranslate(0.0, -7.0, -35.0)
-glRotate(-15, 0, 1, 0)
-glRotate(-7, 0, 0, 1)
-glRotate(-35, 1, 0, 0)
+glTranslate(0.0, 0, -30.0)
+#glRotate(-15, 0, 1, 0)
+#glRotate(-7, 0, 0, 1)
+#glRotate(-35, 1, 0, 0)
 
 
 def AddBlockToGame(type, pos, rotateSpeed = 100):
@@ -34,11 +35,11 @@ def AddBlockToGame(type, pos, rotateSpeed = 100):
     blockList[-1].fadeIn = True
 
 
-AddBlockToGame(type="box", pos=[0, 0, 9])
-AddBlockToGame(type="T", rotateSpeed=-150.0, pos=[1, 1, 9])
-AddBlockToGame(type="S", rotateSpeed=175.0, pos=[-2, 0, 9])
-AddBlockToGame(type="straight", rotateSpeed=125.0, pos=[-2, 2, 9])
-AddBlockToGame(type="L", rotateSpeed=-125.0, pos=[0, 2, 9])
+#AddBlockToGame(type="box", pos=[0, 0, 9])
+#AddBlockToGame(type="T", rotateSpeed=-150.0, pos=[1, 1, 9])
+#AddBlockToGame(type="S", rotateSpeed=175.0, pos=[-2, 0, 9])
+#AddBlockToGame(type="straight", rotateSpeed=125.0, pos=[-2, 2, 9])
+AddBlockToGame(type="L", rotateSpeed=-125.0, pos=[0, 0, 9])
 
 
 
@@ -105,6 +106,7 @@ def Render(screen):
 
     for block in blockList:
         block.Render()
+    Border.Render()
     color = (255, 0, 0)
     rtext = 'hello world'
     text.Render(screen, rtext, 20, 50, 1, color)

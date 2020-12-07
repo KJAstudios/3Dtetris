@@ -1,6 +1,7 @@
 import pygame
 import numpy as np
 import math
+from quaternion_math import *
 from obj_to_vbo import LoadOBJ
 from gamecommon import *
 from PIL import Image
@@ -15,6 +16,7 @@ from OpenGL.GL import shaders
 # Cube() is the class of each cube used in the game.
 # Each frame DrawBlock() is called for each cube along with Update()
 # Presumably, the reason textures are not working has to do with the shaders.
+# TODO DO NOT USE SELF.VERTS TO MOVE THE OBJECT, THAT EDITS THE MODEL ORIGIN ITSELF AND BREAKS CODE
 # 
 
 class Cube:
@@ -22,6 +24,12 @@ class Cube:
         global shapeList
         global gameGrid
         global shapeCornerDict
+
+        # rotation axis variables
+        self.x_angle = 0
+        self.z_angle = 0
+        self.quat_accumulator = (1, 0, 0, 0)
+        self.rotation_angle = 90 * pi / 180
 
         # color of the shape
         self.color = np.asfarray([1, 1, 1])
@@ -56,7 +64,7 @@ class Cube:
         #######################################################
 
         self.correctShader()
-        #self.incorrectShader()
+        # self.incorrectShader()
 
         #######################################################
 
@@ -73,6 +81,16 @@ class Cube:
 
         self.previousPos = pos.copy()
 
+        # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
+        # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
+        # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
+        # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
+        # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
+        # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
+        # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
+        # This actually sets the rotation axis
+        # please keep this section of code, even if it's commented out, I need this to change the rotational axis.
+        # I can't do that till you fix the movement code to translate the object, not edit it directly
         if self.pos != [0, 0, 10]:
             for j in self.verts:
                 for i in range(0, len(j)):
@@ -108,11 +126,11 @@ class Cube:
         self.parts = shapeCornerDict[self.type]
 
         # Use the position as 'center'
-        print('Before')
-        print(gameGrid)
+        #print('Before')
+        #print(gameGrid)
         self.insertToGrid()
-        print('After')
-        print(gameGrid)
+        #print('After')
+        #print(gameGrid)
 
         self.newAlpha = 0.0
 
@@ -291,42 +309,64 @@ class Cube:
 
     def ProcessEvent(self, event):
         if event.type == pygame.KEYDOWN:
+
             if event.key == pygame.K_a:
                 if not self.fadeOut and not self.fadeIn:
-                    for j in self.verts:
-                        for i in range(0, len(j)):
-                            if i % 12 == 0:
-                                x = j[i]
-                                y = j[i+1]
-                                j[i] = -y
-                                j[i+1] = x
+                    self.x_angle = -self.rotation_angle
             elif event.key == pygame.K_d:
                 if not self.fadeOut and not self.fadeIn:
-                    for j in self.verts:
-                        for i in range(0, len(j)):
-                            if i % 12 == 0:
-                                x = j[i]
-                                y = j[i+1]
-                                j[i] = y
-                                j[i+1] = -x
+                    self.x_angle = self.rotation_angle
+            if event.key == pygame.K_s:
+                if not self.fadeOut and not self.fadeIn:
+                    self.z_angle = -self.rotation_angle
             elif event.key == pygame.K_w:
                 if not self.fadeOut and not self.fadeIn:
-                    for j in self.verts:
-                        for i in range(0, len(j)):
-                            if i % 12 == 0:
-                                x = j[i]
-                                z = j[i+2]
-                                j[i] = -z
-                                j[i+1] = x
+                    self.z_angle = self.rotation_angle
+        else:
+            self.x_angle = 0
+            self.z_angle = 0
+
+        x_rotation = normalize(axisangle_to_q((1.0, 0.0, 0.0), self.x_angle))
+        z_rotation = normalize(axisangle_to_q((0.0, 0.0, 1.0), self.z_angle))
+        self.quat_accumulator = q_mult(self.quat_accumulator, x_rotation)
+        self.quat_accumulator = q_mult(self.quat_accumulator, z_rotation)
+        self.matrix = q_to_mat4(self.quat_accumulator)
+
+    def OldProcessEvent(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_a:
+                # world coord rotation
+                for j in self.verts:
+                    for i in range(0, len(j)):
+                        if i % 12 == 0:
+                            x = j[i]
+                            y = j[i + 1]
+                            j[i] = -y
+                            j[i + 1] = x
+            elif event.key == pygame.K_d:
+                for j in self.verts:
+                    for i in range(0, len(j)):
+                        if i % 12 == 0:
+                            x = j[i]
+                            y = j[i + 1]
+                            j[i] = y
+                            j[i + 1] = -x
+            elif event.key == pygame.K_w:
+                for j in self.verts:
+                    for i in range(0, len(j)):
+                        if i % 12 == 0:
+                            x = j[i]
+                            z = j[i + 2]
+                            j[i] = -z
+                            j[i + 1] = x
             elif event.key == pygame.K_s:
-                if not self.fadeOut and not self.fadeIn:
-                    for j in self.verts:
-                        for i in range(0, len(j)):
-                            if i % 12 == 0:
-                                x = j[i]
-                                z = j[i+2]
-                                j[i] = z
-                                j[i+1] = -x
+                for j in self.verts:
+                    for i in range(0, len(j)):
+                        if i % 12 == 0:
+                            x = j[i]
+                            z = j[i + 2]
+                            j[i] = z
+                            j[i + 1] = -x
 
     def Update(self, deltaTime, currentID):
         global gameState
@@ -357,6 +397,13 @@ class Cube:
                 #     print(f'Previous position {self.previousPos}')
                 #     print(f'Current position {self.pos}')
 
+                # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
+                # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
+                # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
+                # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
+                # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
+                # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
+                # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
                 for j in self.verts:
                     for i in range(0, len(j)):
                         if i % 12 == 0:
@@ -378,6 +425,7 @@ class Cube:
             # if self.id == currentID or currentID == -1:
             # Update Angle if self is a current Shape
             # self.ang += self.rotateSpeed * deltaTime
+
 
     def DrawBlock(self):
         ## My Added Texture Code ##
@@ -419,7 +467,7 @@ class Cube:
 
             glBindTexture(GL_TEXTURE_2D, 0)
 
-        ###           
+        ###
 
     def incorrectDrawBlock(self):
         ## My Added Texture Code ##
@@ -471,11 +519,11 @@ class Cube:
 
     def Render(self):
         m = glGetDouble(GL_MODELVIEW_MATRIX)
-
-        # glRotatef(self.ang, *self.axis)
+        glTranslatef(*self.pos)
+        glMultMatrixf(self.matrix)
 
         self.DrawBlock()
-        #self.incorrectDrawBlock()
+        # self.incorrectDrawBlock()
 
         glLoadMatrixf(m)
 
