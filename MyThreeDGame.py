@@ -48,7 +48,7 @@ AddBlockToGame(type="L", pos=[0, 9, 0])
 
 # import UI
 from UI.UIText import UIText
-
+from UI.UIImage import UIImage
 text = UIText()
 text.Init()
 
@@ -117,11 +117,11 @@ def Render(screen):
                 block.Render()
     Border.Render()
     color = (255, 0, 0)
-    rtext = 'hello world'
+    rtext = 'PyHell'
     text.Render(screen, rtext, 20, 50, 1, color)
 
-
-
+    # image = pygame.image.load("Data/GreenBar.png")
+    # UIImage(image)
     #instructions = 'Press num keys to switch blocks'
     #text.Render(screen, instructions, 10, 620, 0.5, color)
 
