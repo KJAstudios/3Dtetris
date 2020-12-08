@@ -3,6 +3,7 @@ from pygame.locals import *
 from gamecommon import *
 from Cube import Cube
 import Border
+import random
 
 # Main Init
 pygame.init()
@@ -25,21 +26,23 @@ glEnable(GL_DEPTH_TEST)
 glDepthFunc(GL_LESS)
 
 glTranslate(0.0, 0, -30.0)
-#glRotate(-15, 0, 1, 0)
+glRotate(-15, 0, 1, 0)
 #glRotate(-7, 0, 0, 1)
 #glRotate(-35, 1, 0, 0)
 
+random.seed()
 
-def AddBlockToGame(type, pos, rotateSpeed = 100):
-    blockList.append(Cube(type, rotateSpeed, pos))
+
+def AddBlockToGame(type, pos):
+    blockList.append(Cube(type, pos))
     blockList[-1].fadeIn = True
 
 
-#AddBlockToGame(type="box", pos=[0, 0, 9])
-#AddBlockToGame(type="T", rotateSpeed=-150.0, pos=[1, 1, 9])
-#AddBlockToGame(type="S", rotateSpeed=175.0, pos=[-2, 0, 9])
-#AddBlockToGame(type="straight", rotateSpeed=125.0, pos=[-2, 2, 9])
-AddBlockToGame(type="L", rotateSpeed=-125.0, pos=[0, 0, 9])
+#AddBlockToGame(type="box", pos=[0, 9, 0])
+#AddBlockToGame(type="T",  pos=[1, 9, 1])
+#AddBlockToGame(type="S", pos=[-2, 9, 0])
+#AddBlockToGame(type="straight", pos=[-2, 9, 2])
+AddBlockToGame(type="L", pos=[0, 9, 0])
 
 
 
@@ -54,6 +57,9 @@ currentShapeID = -1
 def Update(deltaTime):
     global currentShapeID
     global gameState
+
+    if len(blockList) == 0:
+        AddBlockToGame(type=shapeList[random.randint(0,4)], pos=[0,9,0])
 
     # If the game is paused,
     if gameState[0] == 1:
@@ -83,6 +89,7 @@ def Update(deltaTime):
         #if UI.ProcessEvent(event) == True:
         #    continue
 
+
     for id, block in enumerate(blockList):
         # id can be used to determine if a block should be able to be rotated
         block.Update(deltaTime, currentShapeID)
@@ -104,8 +111,10 @@ def Render(screen):
     global text
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-    for block in blockList:
-        block.Render()
+    if len(blockList) != 0:
+        for block in blockList:
+            if block.doesExist():
+                block.Render()
     Border.Render()
     color = (255, 0, 0)
     rtext = 'hello world'

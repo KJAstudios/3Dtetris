@@ -20,7 +20,7 @@ from OpenGL.GL import shaders
 # 
 
 class Cube:
-    def __init__(self, type=None, rotateSpeed=100.0, pos=[0, 0, 9]):
+    def __init__(self, type=None, pos=[0, 9, 0]):
         global shapeList
         global gameGrid
         global shapeCornerDict
@@ -30,6 +30,8 @@ class Cube:
         self.z_angle = 0
         self.quat_accumulator = (1, 0, 0, 0)
         self.rotation_angle = 90 * pi / 180
+        self.axis = (0, 0, 0)
+        self.exists = True
 
         # color of the shape
         self.color = np.asfarray([1, 1, 1])
@@ -68,6 +70,27 @@ class Cube:
 
         #######################################################
 
+        # set rotation axis for shape here
+        if self.type == "box":
+            self.axis = (-1, -1, 1)
+        elif self.type == "T":
+            self.axis = (-0.5, -0.5, 0.5)
+        elif self.type == "S":
+            self.axis = (-0.5, -1, -0.5)
+        elif self.type == "straight":
+            self.axis = (-0.5,-2,0.5)
+        elif self.type == "L":
+            self.axis = (-0.5, -1.5, 0.5)
+
+        for j in self.verts:
+            for i in range(0, len(j)):
+                if i % 12 == 0:
+                    j[i] += self.axis[0]
+                elif i % 12 == 1:
+                    j[i] += self.axis[1]
+                elif i % 12 == 2:
+                    j[i] += self.axis[2]
+
         # If necessary, translate shape location based on pos
         self.pos = pos.copy()
 
@@ -81,56 +104,20 @@ class Cube:
 
         self.previousPos = pos.copy()
 
-        # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
-        # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
-        # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
-        # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
-        # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
-        # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
-        # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
-        # This actually sets the rotation axis
-        # please keep this section of code, even if it's commented out, I need this to change the rotational axis.
-        # I can't do that till you fix the movement code to translate the object, not edit it directly
-        if self.pos != [0, 0, 10]:
-            for j in self.verts:
-                for i in range(0, len(j)):
-                    if i % 12 == 0:
-                        j[i] += self.pos[0]
-                    elif i % 12 == 1:
-                        j[i] += self.pos[1]
-                    elif i % 12 == 2:
-                        j[i] += self.pos[2]
-        else:
-            for j in self.verts:
-                for i in range(0, len(j)):
-                    if i % 12 == 2:
-                        j[i] += 10
-
-        self.ang = 0
-
-        # Get speed of rotation
-        self.rotateSpeed = rotateSpeed
-        # Axis of rotation (0,0,0) + self.pos
-        self.axis = (0, 0, 0)
-
         self.textureGen = self.load_texture()
 
-        ### Set Starting Angle
-        if self.type == 'box':
-            self.ang = 0
-        elif self.type == 'T':
-            self.ang = 0
+
 
         ### Insert block into array
         # Get positions relative to center
         self.parts = shapeCornerDict[self.type]
 
         # Use the position as 'center'
-        #print('Before')
-        #print(gameGrid)
+        # print('Before')
+        # print(gameGrid)
         self.insertToGrid()
-        #print('After')
-        #print(gameGrid)
+        # print('After')
+        # print(gameGrid)
 
         self.newAlpha = 0.0
 
@@ -141,15 +128,13 @@ class Cube:
 
     def insertToGrid(self):
         for i in self.parts:
-            gameGrid[self.pos[2] + i[2]][self.pos[1] + i[1]][self.pos[0] + i[0]] = self.id
+            gameGrid[self.pos[1] + i[1]][self.pos[2] + i[2]][self.pos[0] + i[0]] = self.id
 
     def moveDown(self, deltaTime):
         # TODO : Check gameGrid before moving blocks
 
-        if self.pos[2] > 0:
-            self.pos[2] -= 1
-        if self.pos[2] < 0:
-            self.pos[2] = 0
+        #if self.pos[1] > 0:
+        self.pos[1] -= 1
 
     def load_texture(self):
         # Load texture image
@@ -326,8 +311,8 @@ class Cube:
             self.x_angle = 0
             self.z_angle = 0
 
-        x_rotation = normalize(axisangle_to_q((1.0, 0.0, 0.0), self.x_angle))
-        z_rotation = normalize(axisangle_to_q((0.0, 0.0, 1.0), self.z_angle))
+        x_rotation = normalize(axisangle_to_q((0.0, 0.0, 1.0), self.x_angle))
+        z_rotation = normalize(axisangle_to_q((1.0, 0.0, 0.0), self.z_angle))
         self.quat_accumulator = q_mult(self.quat_accumulator, x_rotation)
         self.quat_accumulator = q_mult(self.quat_accumulator, z_rotation)
         self.matrix = q_to_mat4(self.quat_accumulator)
@@ -388,7 +373,7 @@ class Cube:
                 if gameState[0] == 0:
                     self._delete()
         else:
-            if self.moveTimer >= 0.5:
+            if self.moveTimer >= 1.0:
                 self.moveDown(deltaTime)
                 self.moveTimer = 0
 
@@ -396,35 +381,18 @@ class Cube:
                 # if self.id == 1:
                 #     print(f'Previous position {self.previousPos}')
                 #     print(f'Current position {self.pos}')
-
-                # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
-                # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
-                # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
-                # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
-                # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
-                # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
-                # TODO JACOB MAKE THIS NOT WORK ON THE BASE MODEL ITSELF, THIS BREAKS THE ROTATION CODE, IT SHOULD BE A GLTRANSLATE?
-                for j in self.verts:
-                    for i in range(0, len(j)):
-                        if i % 12 == 0:
-                            j[i] += self.pos[0] - self.previousPos[0]
-                        elif i % 12 == 1:
-                            j[i] += self.pos[1] - self.previousPos[1]
-                        elif i % 12 == 2:
-                            j[i] += self.pos[2] - self.previousPos[2]
+                self.pos[0] += self.pos[0] - self.previousPos[0]
+                self.pos[1] += self.pos[1] - self.previousPos[1]
+                self.pos[2] += self.pos[2] - self.previousPos[2]
 
                 self.previousPos = self.pos.copy()
 
                 # The vbo thing does something
                 self.vbo = vbo.VBO(self.verts)  # <- this is where verts is processed
 
-            if self.pos[2] == 0:
+            if self.pos[1] <= -4:
                 self.fadeOut = True
 
-            # Blocks will not automatically rotate for now
-            # if self.id == currentID or currentID == -1:
-            # Update Angle if self is a current Shape
-            # self.ang += self.rotateSpeed * deltaTime
 
 
     def DrawBlock(self):
@@ -514,18 +482,23 @@ class Cube:
     def _delete(self):
         global blockList
 
+        self.exists = False
         blockList.remove(self)
-        del self
+        #del self
 
     def Render(self):
-        m = glGetDouble(GL_MODELVIEW_MATRIX)
-        glTranslatef(*self.pos)
-        glMultMatrixf(self.matrix)
+        if self.exists:
+            m = glGetDouble(GL_MODELVIEW_MATRIX)
+            glTranslatef(self.pos[0], self.pos[1], self.pos[2])
+            glMultMatrixf(self.matrix)
 
-        self.DrawBlock()
-        # self.incorrectDrawBlock()
+            self.DrawBlock()
+            # self.incorrectDrawBlock()
 
-        glLoadMatrixf(m)
+            glLoadMatrixf(m)
+
+    def doesExist(self):
+        return self.exists
 
     ##########################################################
     # Below is the code used before shaders were implemented #
