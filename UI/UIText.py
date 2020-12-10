@@ -77,7 +77,7 @@ VAO = None
 
 class UIText:
     def Init(self):
-        global VERTEXT_SHADER
+        global VERTEX_SHADER
         global FRAGMENT_SHADER
         global shaderProgram
         global Characters

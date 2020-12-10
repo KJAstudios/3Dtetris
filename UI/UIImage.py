@@ -94,29 +94,3 @@ def UIImage(image):
 
     glDrawArrays(GL_TRIANGLES, 0, 6)
 
-# def main():
-#     pygame.quit()
-#     pygame.init()
-#     image = pygame.image.load("GreenBar.png")
-#
-#     width = image.get_width()
-#     height = image.get_height()
-#     # width = 1920
-#     # height = 1080
-#     size = (width,height)
-#     pygame.display.set_mode(size, pygame.OPENGL | pygame.DOUBLEBUF | pygame.HWSURFACE)
-#     glViewport(0, 0, width, height)
-#
-#
-#     renderSplash(image)
-#     pygame.display.flip()
-#     close_window()
-#
-# def close_window():
-#     key_pressed = False
-#     while not key_pressed:
-#         for event in pygame.event.get():
-#             if event.type == pygame.KEYDOWN:
-#                 key_pressed = True
-#
-# main()

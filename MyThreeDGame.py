@@ -117,7 +117,7 @@ def Render(screen):
                 block.Render()
     Border.Render()
     color = (255, 0, 0)
-    rtext = 'PyHell'
+    rtext = 'Hello World'
     text.Render(screen, rtext, 20, 50, 1, color)
 
     # image = pygame.image.load("Data/GreenBar.png")
