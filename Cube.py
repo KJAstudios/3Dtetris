@@ -27,8 +27,10 @@ class Cube:
 
         # rotation axis variables
         self.x_angle = 0
+        self.y_angle = 0
         self.z_angle = 0
         self.quat_accumulator = (1, 0, 0, 0)
+        self.matrix = q_to_mat4(self.quat_accumulator)
         self.rotation_angle = 90 * pi / 180
         self.axis = (0, 0, 0)
         self.exists = True
@@ -78,7 +80,7 @@ class Cube:
         elif self.type == "S":
             self.axis = (-0.5, -1, -0.5)
         elif self.type == "straight":
-            self.axis = (-0.5,-2,0.5)
+            self.axis = (-0.5, -2, 0.5)
         elif self.type == "L":
             self.axis = (-0.5, -1.5, 0.5)
 
@@ -106,8 +108,6 @@ class Cube:
 
         self.textureGen = self.load_texture()
 
-
-
         ### Insert block into array
         # Get positions relative to center
         self.parts = shapeCornerDict[self.type]
@@ -126,6 +126,12 @@ class Cube:
         self.fadeIn = False
         self.fadeOut = False
 
+    def _delete(self):
+        global blockList
+
+        self.exists = False
+        # del self
+
     def insertToGrid(self):
         for i in self.parts:
             gameGrid[self.pos[1] + i[1]][self.pos[2] + i[2]][self.pos[0] + i[0]] = self.id
@@ -133,7 +139,7 @@ class Cube:
     def moveDown(self, deltaTime):
         # TODO : Check gameGrid before moving blocks
 
-        #if self.pos[1] > 0:
+        # if self.pos[1] > 0:
         self.pos[1] -= 1
 
     def load_texture(self):
@@ -297,23 +303,39 @@ class Cube:
 
             if event.key == pygame.K_a:
                 if not self.fadeOut and not self.fadeIn:
-                    self.x_angle = -self.rotation_angle
+                    self.x_angle = self.rotation_angle
             elif event.key == pygame.K_d:
                 if not self.fadeOut and not self.fadeIn:
-                    self.x_angle = self.rotation_angle
+                    self.y_angle = self.rotation_angle
             if event.key == pygame.K_s:
                 if not self.fadeOut and not self.fadeIn:
                     self.z_angle = -self.rotation_angle
-            elif event.key == pygame.K_w:
+            if event.key == pygame.K_UP:
                 if not self.fadeOut and not self.fadeIn:
-                    self.z_angle = self.rotation_angle
+                    if self.pos[2] >= -2:
+                        self.pos[2] -= 1
+            elif event.key == pygame.K_DOWN:
+                if not self.fadeOut and not self.fadeIn:
+                    if self.pos[2] <= 2:
+                        self.pos[2] += 1
+            if event.key == pygame.K_LEFT:
+                if not self.fadeOut and not self.fadeIn:
+                    if self.pos[0] >= -2:
+                        self.pos[0] -= 1
+            elif event.key == pygame.K_RIGHT:
+                if not self.fadeOut and not self.fadeIn:
+                    if self.pos[0] <= 2:
+                        self.pos[0] += 1
         else:
             self.x_angle = 0
+            self.y_angle = 0
             self.z_angle = 0
 
         x_rotation = normalize(axisangle_to_q((0.0, 0.0, 1.0), self.x_angle))
+        y_rotation = normalize(axisangle_to_q((0.0, 1.0, 0.0), self.y_angle))
         z_rotation = normalize(axisangle_to_q((1.0, 0.0, 0.0), self.z_angle))
         self.quat_accumulator = q_mult(self.quat_accumulator, x_rotation)
+        self.quat_accumulator = q_mult(self.quat_accumulator, y_rotation)
         self.quat_accumulator = q_mult(self.quat_accumulator, z_rotation)
         self.matrix = q_to_mat4(self.quat_accumulator)
 
@@ -372,6 +394,8 @@ class Cube:
 
                 if gameState[0] == 0:
                     self._delete()
+            if self.newAlpha == 0.0:
+                self._delete()
         else:
             if self.moveTimer >= 1.0:
                 self.moveDown(deltaTime)
@@ -392,8 +416,6 @@ class Cube:
 
             if self.pos[1] <= -4:
                 self.fadeOut = True
-
-
 
     def DrawBlock(self):
         ## My Added Texture Code ##
@@ -479,15 +501,8 @@ class Cube:
 
         ###
 
-    def _delete(self):
-        global blockList
-
-        self.exists = False
-        blockList.remove(self)
-        #del self
-
     def Render(self):
-        if self.exists:
+        if self.exists and self.matrix is not None:
             m = glGetDouble(GL_MODELVIEW_MATRIX)
             glTranslatef(self.pos[0], self.pos[1], self.pos[2])
             glMultMatrixf(self.matrix)

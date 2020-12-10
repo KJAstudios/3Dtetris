@@ -22,8 +22,10 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8579d7c3-491f-43eb-b2bf-590091611ea6" name="Default Changelist" comment="changed some small stuffs">
+    <list default="true" id="8579d7c3-491f-43eb-b2bf-590091611ea6" name="Default Changelist" comment="Got rotations working properly, Jacob has some work to do">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cube.py" beforeDir="false" afterPath="$PROJECT_DIR$/Cube.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyThreeDGame.py" beforeDir="false" afterPath="$PROJECT_DIR$/MyThreeDGame.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +49,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Andrew_test_folder/test_main.py" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -59,6 +61,48 @@
     </key>
   </component>
   <component name="RunManager" selected="Python.MyThreeDGame">
+    <configuration name="Cube" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="3Dtetris" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Cube.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="MyThreeDGame (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="3Dtetris" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ClassNotes" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ClassNotes/MyThreeDGame.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="MyThreeDGame" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="3Dtetris" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -72,6 +116,27 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MyThreeDGame.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="quat_example_main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="3Dtetris" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Program Files (x86)\Microsoft Visual Studio\Shared\Python36_64\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Andrew_test_folder" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="C:\Users\KJA\Google Drive\Data Structures 1\3Dtetris\Andrew_test_folder\quat_example_main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -97,6 +162,9 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Python.quat_example_main" />
+      <item itemvalue="Python.Cube" />
+      <item itemvalue="Python.MyThreeDGame (1)" />
       <item itemvalue="Python.MyThreeDGame" />
       <item itemvalue="Python tests.pytest in quat_example_main.py" />
     </list>
@@ -104,6 +172,8 @@
       <list>
         <item itemvalue="Python.MyThreeDGame" />
         <item itemvalue="Python tests.pytest in quat_example_main.py" />
+        <item itemvalue="Python.Cube" />
+        <item itemvalue="Python.MyThreeDGame (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -130,21 +200,7 @@
       <option name="project" value="LOCAL" />
       <updated>1607319095518</updated>
     </task>
-    <task id="LOCAL-00003" summary="Hmm, loading image works though there's still problems">
-      <created>1607416074874</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1607416074874</updated>
-    </task>
-    <task id="LOCAL-00004" summary="changed some small stuffs">
-      <created>1607634085690</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1607634085690</updated>
-    </task>
-    <option name="localTasksCounter" value="5" />
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -162,96 +218,85 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added rotation with WSAD" />
     <MESSAGE value="Got rotations working properly, Jacob has some work to do" />
-    <MESSAGE value="Hmm, loading image works though there's still problems" />
-    <MESSAGE value="changed some small stuffs" />
-    <option name="LAST_COMMIT_MESSAGE" value="changed some small stuffs" />
+    <option name="LAST_COMMIT_MESSAGE" value="Got rotations working properly, Jacob has some work to do" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="552" y="264" width="817" height="598" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1607500946931">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="736" y="356" width="1089" height="737" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1607219330307">
+      <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="552" y="264" width="817" height="598" key="#com.intellij.execution.impl.EditConfigurationsDialog/-1920.0.1536.832/0.0.1920.1040@0.0.1920.1040" timestamp="1607500946931" />
     <state x="736" y="356" width="1089" height="737" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607219330307" />
     <state x="961" y="437" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1607280193483">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="961" y="437" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607280193483" />
-    <state x="796" y="357" key="FileChooserDialogImpl" timestamp="1607500739820">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="1061" y="480" key="FileChooserDialogImpl" timestamp="1607219324619">
+      <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="796" y="357" key="FileChooserDialogImpl/-1920.0.1536.832/0.0.1920.1040@0.0.1920.1040" timestamp="1607500739820" />
     <state x="1061" y="480" key="FileChooserDialogImpl/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607219324619" />
-    <state width="1899" height="276" key="GridCell.Tab.0.bottom" timestamp="1607634317352">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="2539" height="399" key="GridCell.Tab.0.bottom" timestamp="1607635331425">
+      <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1899" height="276" key="GridCell.Tab.0.bottom/-1920.0.1536.832/0.0.1920.1040@0.0.1920.1040" timestamp="1607634317352" />
     <state width="1899" height="306" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1606950646900" />
     <state width="1899" height="492" key="GridCell.Tab.0.bottom/0.0.2560.1400/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1607371252619" />
-    <state width="2539" height="691" key="GridCell.Tab.0.bottom/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607372673145" />
-    <state width="1899" height="276" key="GridCell.Tab.0.center" timestamp="1607634317352">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="2539" height="399" key="GridCell.Tab.0.bottom/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607635331425" />
+    <state width="2539" height="399" key="GridCell.Tab.0.center" timestamp="1607635331425">
+      <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1899" height="276" key="GridCell.Tab.0.center/-1920.0.1536.832/0.0.1920.1040@0.0.1920.1040" timestamp="1607634317352" />
     <state width="1899" height="306" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1606950646900" />
     <state width="1899" height="492" key="GridCell.Tab.0.center/0.0.2560.1400/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1607371252618" />
-    <state width="2539" height="691" key="GridCell.Tab.0.center/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607372673144" />
-    <state width="1899" height="276" key="GridCell.Tab.0.left" timestamp="1607634317351">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="2539" height="399" key="GridCell.Tab.0.center/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607635331425" />
+    <state width="2539" height="399" key="GridCell.Tab.0.left" timestamp="1607635331425">
+      <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1899" height="276" key="GridCell.Tab.0.left/-1920.0.1536.832/0.0.1920.1040@0.0.1920.1040" timestamp="1607634317351" />
     <state width="1899" height="306" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1606950646900" />
     <state width="1899" height="492" key="GridCell.Tab.0.left/0.0.2560.1400/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1607371252618" />
-    <state width="2539" height="691" key="GridCell.Tab.0.left/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607372673144" />
-    <state width="1899" height="276" key="GridCell.Tab.0.right" timestamp="1607634317352">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="2539" height="399" key="GridCell.Tab.0.left/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607635331425" />
+    <state width="2539" height="399" key="GridCell.Tab.0.right" timestamp="1607635331425">
+      <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="1899" height="276" key="GridCell.Tab.0.right/-1920.0.1536.832/0.0.1920.1040@0.0.1920.1040" timestamp="1607634317352" />
     <state width="1899" height="306" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1606950646900" />
     <state width="1899" height="492" key="GridCell.Tab.0.right/0.0.2560.1400/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1607371252618" />
-    <state width="2539" height="691" key="GridCell.Tab.0.right/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607372673144" />
-    <state width="2539" height="691" key="GridCell.Tab.1.bottom" timestamp="1607372673145">
+    <state width="2539" height="399" key="GridCell.Tab.0.right/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607635331425" />
+    <state width="2539" height="182" key="GridCell.Tab.1.bottom" timestamp="1607633916361">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1899" height="348" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1606337651230" />
     <state width="1899" height="492" key="GridCell.Tab.1.bottom/0.0.2560.1400/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1607371252619" />
-    <state width="2539" height="691" key="GridCell.Tab.1.bottom/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607372673145" />
-    <state width="2539" height="691" key="GridCell.Tab.1.center" timestamp="1607372673145">
+    <state width="2539" height="182" key="GridCell.Tab.1.bottom/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607633916361" />
+    <state width="2539" height="182" key="GridCell.Tab.1.center" timestamp="1607633916361">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1899" height="348" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1606337651229" />
     <state width="1899" height="492" key="GridCell.Tab.1.center/0.0.2560.1400/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1607371252619" />
-    <state width="2539" height="691" key="GridCell.Tab.1.center/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607372673145" />
-    <state width="2539" height="691" key="GridCell.Tab.1.left" timestamp="1607372673145">
+    <state width="2539" height="182" key="GridCell.Tab.1.center/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607633916361" />
+    <state width="2539" height="182" key="GridCell.Tab.1.left" timestamp="1607633916361">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1899" height="348" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1606337651229" />
     <state width="1899" height="492" key="GridCell.Tab.1.left/0.0.2560.1400/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1607371252619" />
-    <state width="2539" height="691" key="GridCell.Tab.1.left/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607372673145" />
-    <state width="2539" height="691" key="GridCell.Tab.1.right" timestamp="1607372673145">
+    <state width="2539" height="182" key="GridCell.Tab.1.left/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607633916361" />
+    <state width="2539" height="182" key="GridCell.Tab.1.right" timestamp="1607633916361">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state width="1899" height="348" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1606337651229" />
     <state width="1899" height="492" key="GridCell.Tab.1.right/0.0.2560.1400/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1607371252619" />
-    <state width="2539" height="691" key="GridCell.Tab.1.right/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607372673145" />
+    <state width="2539" height="182" key="GridCell.Tab.1.right/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607633916361" />
     <state x="640" y="183" key="MergeDialog" timestamp="1607201462394">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="640" y="183" key="MergeDialog/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607201462394" />
-    <state x="461" y="165" key="SettingsEditor" timestamp="1607502182418">
+    <state x="461" y="165" key="SettingsEditor" timestamp="1606272176448">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="461" y="165" key="SettingsEditor/-1920.0.1536.832/0.0.1920.1040@0.0.1920.1040" timestamp="1607502182418" />
     <state x="461" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1606272176448" />
-    <state x="655" y="322" key="Vcs.Push.Dialog.v2" timestamp="1607416086306">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="873" y="434" key="Vcs.Push.Dialog.v2" timestamp="1607319098152">
+      <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="655" y="322" key="Vcs.Push.Dialog.v2/-1920.0.1536.832/0.0.1920.1040@0.0.1920.1040" timestamp="1607416086306" />
     <state x="873" y="434" key="Vcs.Push.Dialog.v2/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607319098152" />
-    <state x="824" y="457" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1607634022859">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="1098" y="615" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1607633216718">
+      <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="824" y="457" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/-1920.0.1536.832/0.0.1920.1040@0.0.1920.1040" timestamp="1607634022859" />
-    <state x="1098" y="615" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607201336609" />
+    <state x="1098" y="615" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.2560.1400/-1920.0.1920.1040@0.0.2560.1400" timestamp="1607633216718" />
     <state x="1124" y="486" key="refactoring.ChangeSignatureDialog" timestamp="1607317715113">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
@@ -272,8 +317,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/MyThreeDGame.py</url>
-          <line>116</line>
-          <option name="timeStamp" value="15" />
+          <line>88</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Cube.py</url>
+          <line>300</line>
+          <option name="timeStamp" value="18" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
